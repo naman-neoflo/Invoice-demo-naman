@@ -31,13 +31,147 @@ CURRENCY_TOLERANCE = {
 }
 
 
-def _build_matching(invoice_schema: dict, currency: str | None, li_fixture: dict) -> dict:
-    """Replicate line-item-computation.json's Collapse Invoice Lines +
-    Tolerance Config + Transform Tool Result against fixture data.
+def _distribute_qty(inv_qty: float, n: int) -> list:
+    """Distribute inv_qty across n rows with integer-aware splitting."""
+    if n <= 0:
+        return []
+    if n == 1:
+        return [inv_qty]
+    # Integer case: use floor+remainder distribution
+    if inv_qty == int(inv_qty):
+        total = int(inv_qty)
+        base = total // n
+        rem = total % n
+        return [base + (1 if i < rem else 0) for i in range(n)]
+    # Float case: even split, last row absorbs rounding
+    per = round(inv_qty / n, 4)
+    result = [per] * (n - 1)
+    result.append(round(inv_qty - per * (n - 1), 4))
+    return result
 
-    All invoice line items collapse into ONE row (= total_amount_before_vat).
-    The granular extraction lines become the matching dataset (GRN side) so
-    the variance bar has per-row amounts to add up as the user toggles them.
+
+def _build_per_item_matching(line_items: list, fixture_results: list, doc_date: str) -> list:
+    """Build per-invoice-line-item matching data with GRN candidates.
+
+    Each invoice line item gets its own list of GRN candidates derived from
+    the fixture result for that line (matched by position, since all
+    invoice_line_ids in the fixture are "PLACEHOLDER_ID").
+
+    Perfect  → one GRN row per po/grn ref, invoice qty distributed evenly.
+    Probable → one GRN row per probable_candidate ref, available_qty distributed.
+    No match → empty GRN candidates list.
+    """
+    per_item = []
+    for idx, li in enumerate(line_items):
+        inv_qty = float(li.get("quantity") or 0)
+        unit_price = float(li.get("unit_price") or 0)
+        inv_total = round(float(li.get("total_price_before_vat") or 0), 2)
+        description = li.get("item_description") or ""
+        item_code = li.get("item_code") or ""
+        li_id = li.get("id", idx + 1)
+
+        result = fixture_results[idx] if idx < len(fixture_results) else None
+        fixture_status = (result or {}).get("match_status", "no_match")
+        # Map to UI status names
+        ui_status = "matched" if fixture_status == "perfect" else fixture_status
+
+        grn_candidates = []
+
+        if result and fixture_status == "perfect":
+            rdata = result.get("result_data") or {}
+            matched_ids = rdata.get("matched_row_ids") or []
+            po_refs = rdata.get("po") or []
+            grn_refs = rdata.get("grn") or []
+            # Use po/grn count; fall back to matched_row_ids count; default 1
+            n = len(po_refs) or len(grn_refs) or len(matched_ids) or 1
+
+            qtys = _distribute_qty(inv_qty, n)
+            for j in range(n):
+                q = qtys[j] if j < len(qtys) else 0
+                total = round(q * unit_price, 2)
+                grn_candidates.append({
+                    "id": f"{li_id}-grn-{j + 1}",
+                    "po_number": po_refs[j] if j < len(po_refs) else None,
+                    "grn_number": grn_refs[j] if j < len(grn_refs) else f"GRN-{matched_ids[j] if j < len(matched_ids) else idx + 1}",
+                    "document_date": doc_date,
+                    "description": description,
+                    "quantity": q,
+                    "unit_price": unit_price,
+                    "line_total": total,
+                    "is_matched": True,
+                    "is_ai_suggested": False,
+                    "qty_diff": 0,
+                    "total_diff": 0,
+                })
+
+        elif result and fixture_status == "probable":
+            rdata = result.get("result_data") or {}
+            # Support both probable_candidates structure and flat po/grn arrays
+            prob_candidates = rdata.get("probable_candidates") or []
+            if prob_candidates:
+                best = prob_candidates[0]
+                po_refs = best.get("po") or []
+                grn_refs = best.get("grn") or []
+                available_qty = best.get("available_qty")
+            else:
+                po_refs = rdata.get("po") or []
+                grn_refs = rdata.get("grn") or []
+                available_qty = None
+
+            n = len(po_refs) if po_refs else len(grn_refs) if grn_refs else 1
+            # Use available_qty if provided; otherwise 80% of invoice qty (integer-safe)
+            if available_qty is not None:
+                grn_total_qty = float(available_qty)
+            else:
+                raw = inv_qty * 0.8
+                grn_total_qty = float(int(raw) if raw == int(raw) else round(raw, 4))
+
+            grn_qtys = _distribute_qty(grn_total_qty, n)
+            inv_qtys = _distribute_qty(inv_qty, n)
+
+            for j in range(n):
+                g_qty = grn_qtys[j] if j < len(grn_qtys) else 0
+                i_qty = inv_qtys[j] if j < len(inv_qtys) else 0
+                g_total = round(g_qty * unit_price, 2)
+                i_total_row = round(i_qty * unit_price, 2)
+                grn_candidates.append({
+                    "id": f"{li_id}-grn-{j + 1}",
+                    "po_number": po_refs[j] if j < len(po_refs) else None,
+                    "grn_number": grn_refs[j] if j < len(grn_refs) else f"GRN-{idx + 1}-{j + 1}",
+                    "document_date": doc_date,
+                    "description": description,
+                    "quantity": g_qty,
+                    "unit_price": unit_price,
+                    "line_total": g_total,
+                    "is_matched": True,
+                    "is_ai_suggested": True,
+                    "qty_diff": round(g_qty - i_qty, 4),
+                    "total_diff": round(g_total - i_total_row, 2),
+                })
+        # no_match → grn_candidates stays []
+
+        per_item.append({
+            "id": f"ILI-{idx + 1:04d}",
+            "item_code": item_code,
+            "description": description,
+            "quantity": inv_qty,
+            "unit_price": unit_price,
+            "line_total": inv_total,
+            "match_status": ui_status,
+            "grn_candidates": grn_candidates,
+        })
+
+    return per_item
+
+
+def _build_matching(invoice_schema: dict, currency: str | None, li_fixture: dict) -> dict:
+    """Build the full matching payload.
+
+    Returns both:
+    - per_item_matching  — one entry per invoice line with its own GRN
+      candidates, match status, and discrepancy data (drives the new UI).
+    - Legacy collapsed-invoice structure (invoice_line_items / grn_line_items /
+      results) kept for the variance bar and stage-gating logic.
     """
     metadata = {
         m["field"]: m.get("value")
@@ -50,27 +184,15 @@ def _build_matching(invoice_schema: dict, currency: str | None, li_fixture: dict
     invoice_total = round(float(total_raw or 0), 2)
 
     line_items = invoice_schema.get("line_items", [])
+    fixture_results = li_fixture.get("results", [])
 
-    description = ", ".join(
-        str(li.get("item_description", "")).strip()
-        for li in line_items
-        if li.get("item_description")
-    )
-    collapsed_invoice = {
-        "id": "1",
-        "description": "Total of invoice",
-        "quantity": 1,
-        "unit_price": invoice_total,
-        "line_total": invoice_total,
-        "price": invoice_total,
-    }
-
-    po_number = (li_fixture.get("po_numbers") or [None])[0]
-    # GRN columns mirror invoice-validator-fe's SAP GRN schema
-    # (_get_sap_grn_field_mappings): PO No. | GRN No. | Document Date |
-    # Description | Quantity | Amount. The demo has no real SAP GRN feed, so
-    # GRN No. / Document Date are synthesised deterministically per line.
     doc_date = str(metadata.get("document_date") or metadata.get("invoice_date") or "")
+
+    # ── Per-item matching (new UI) ─────────────────────────────────────────────
+    per_item_matching = _build_per_item_matching(line_items, fixture_results, doc_date)
+
+    # ── Legacy collapsed structure (variance bar / stage gating) ──────────────
+    po_number = (li_fixture.get("po_numbers") or [None])[0]
     grn_line_items = []
     for idx, li in enumerate(line_items, start=1):
         amount = round(float(li.get("total_price_before_vat") or 0), 2)
@@ -88,11 +210,19 @@ def _build_matching(invoice_schema: dict, currency: str | None, li_fixture: dict
     grn_ids = [g["id"] for g in grn_line_items]
     grn_sum = round(sum(g["amount"] for g in grn_line_items), 2)
 
+    collapsed_invoice = {
+        "id": "1",
+        "description": "Total of invoice",
+        "quantity": 1,
+        "unit_price": invoice_total,
+        "line_total": invoice_total,
+        "price": invoice_total,
+    }
+
     tolerance = {
         "currency": currency or "USD",
         "value": CURRENCY_TOLERANCE.get((currency or "").upper(), 0),
     }
-    # min = invoice total, max = sum of every GRN line (mirrors Transform Tool Result)
     allowed_range = {"min": invoice_total, "max": grn_sum}
     diff = round(invoice_total - grn_sum, 2)
     variance = {
@@ -121,17 +251,23 @@ def _build_matching(invoice_schema: dict, currency: str | None, li_fixture: dict
         "created_at": None,
     }]
 
+    n_matched = sum(1 for r in fixture_results if r.get("match_status") == "perfect")
+    n_probable = sum(1 for r in fixture_results if r.get("match_status") == "probable")
+    n_no_match = sum(1 for r in fixture_results if r.get("match_status") == "no_match")
+
     return {
         "summary": {
-            "perfect": 1 if grn_ids else 0,
-            "no_match": 0 if grn_ids else 1,
-            "total_items": 1,
+            "perfect": n_matched,
+            "probable": n_probable,
+            "no_match": n_no_match,
+            "total_items": len(line_items),
         },
         "match_type": li_fixture.get("match_type", "3-way"),
         "ai_metadata": li_fixture.get("ai_metadata", {}),
         "invoice_line_items": [collapsed_invoice],
         "grn_line_items": grn_line_items,
         "results": results,
+        "per_item_matching": per_item_matching,
         "tolerance": tolerance,
         "allowed_range": allowed_range,
         "variance": variance,
@@ -166,6 +302,17 @@ async def get_line_item_matching(invoice_id: str, current_user: CurrentUser):
     meta_summary = meta_fixture.get("summary", {})
 
     stage_doc = await executed_stages(db).find_one({"run_id": oid, "stage_slug": "line_item_matching"}) or {}
+
+    # Apply any user-confirmed mappings saved via PATCH .../mappings
+    confirmed_mappings = stage_doc.get("confirmed_mappings")
+    if confirmed_mappings is not None:
+        checked_grn_ids = set(confirmed_mappings.get("checked_grn_ids", []))
+        confirmed_item_ids = set(confirmed_mappings.get("confirmed_item_ids", []))
+        for item in matching["per_item_matching"]:
+            if item["id"] in confirmed_item_ids:
+                item["match_status"] = "matched"
+            for grn in item["grn_candidates"]:
+                grn["is_matched"] = grn["id"] in checked_grn_ids
 
     return _envelope(data={
         "invoice_number": _extract_field(invoice_schema, "invoice_number"),
@@ -209,6 +356,39 @@ async def approve_line_item_matching(invoice_id: str, current_user: CurrentUser)
 
 
 # ── POST .../reject ───────────────────────────────────────────────────────────
+
+class SaveMappingsRequest(BaseModel):
+    checked_grn_ids: list[str]
+    confirmed_item_ids: list[str]
+
+
+@router.patch("/invoices/{invoice_id}/stages/line_item_matching/mappings")
+async def save_line_item_mappings(
+    invoice_id: str,
+    body: SaveMappingsRequest,
+    current_user: CurrentUser,
+):
+    _require_editor(current_user)
+    db = get_db()
+    oid = _oid(invoice_id)
+
+    run = await pipeline_runs(db).find_one({"_id": oid}, {"_id": 1})
+    if not run:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+
+    await executed_stages(db).update_one(
+        {"run_id": oid, "stage_slug": "line_item_matching"},
+        {"$set": {
+            "confirmed_mappings": {
+                "checked_grn_ids": body.checked_grn_ids,
+                "confirmed_item_ids": body.confirmed_item_ids,
+            }
+        }},
+        upsert=True,
+    )
+
+    return _envelope(data={"ok": True})
+
 
 class RejectRequest(BaseModel):
     reason: str

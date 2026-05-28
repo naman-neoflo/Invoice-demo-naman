@@ -50,5 +50,8 @@ flow.png
 PROGRESS.md
 
 # Deployment scripts (local, contains environment-specific config)
-deploy-ec2.sh
 RUN_LOCAL.md
+
+# Keep deploy script in repo (no secrets inside)
+# deploy-ec2.sh is trackedbackend/uploads/
+uploads/

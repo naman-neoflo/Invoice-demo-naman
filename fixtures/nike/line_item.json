@@ -4,8 +4,8 @@
   "base_document": "invoice",
   "summary": {
     "total_items": 38,
-    "perfect_matches": 34,
-    "probable_matches": 4,
+    "perfect_matches": 37,
+    "probable_matches": 1,
     "no_matches": 0
   },
   "results": [
@@ -334,42 +334,27 @@
     {
       "id": 11,
       "invoice_line_id": "PLACEHOLDER_ID",
-      "match_status": "probable",
+      "match_status": "perfect",
       "result_data": {
-        "matched_row_ids": null,
-        "confidence": null,
-        "probable_candidates": [
-          {
-            "rank": 1,
-            "po": [
-              "FKEMB",
-              "YALLY",
-              "88P8L",
-              "BLC9Y",
-              "31ZI3",
-              "4MQAG"
-            ],
-            "grn": [
-              "TC8HA",
-              "JPPHI",
-              "SQSSJ",
-              "9NJZ4",
-              "X80QN",
-              "IX6AN"
-            ],
-            "confidence": 0.9
-          },
-          {
-            "rank": 2,
-            "po": [
-              "R1370"
-            ],
-            "grn": [
-              "SKP13"
-            ],
-            "confidence": 0.75
-          }
-        ]
+        "po": [
+          "3XEEI",
+          "JHBWE",
+          "5NMEI",
+          "WHGYE",
+          "KLFCO",
+          "P7O21",
+          "RJ52Q"
+        ],
+        "grn": [
+          "CKQKS",
+          "12J05",
+          "PKRWZ",
+          "2JPDI",
+          "6HPCY",
+          "FZKN9",
+          "5W90M"
+        ],
+        "confidence": 1
       },
       "matching_method": null,
       "matched_by": null,
@@ -752,34 +737,29 @@
     {
       "id": 21,
       "invoice_line_id": "PLACEHOLDER_ID",
-      "match_status": "probable",
+      "match_status": "perfect",
       "result_data": {
-        "matched_row_ids": null,
-        "confidence": null,
-        "probable_candidates": [
-          {
-            "rank": 1,
-            "po": [
-              "LUS5D",
-              "OKDRC",
-              "O0KNT",
-              "I6ZD5",
-              "VVD1C",
-              "L92XQ",
-              "H0XNR"
-            ],
-            "grn": [
-              "S57B0",
-              "N5UQA",
-              "ZPKBH",
-              "EDIIM",
-              "GZ2QJ",
-              "DL4KI",
-              "RM1X8"
-            ],
-            "confidence": 0.85
-          }
-        ]
+        "po": [
+          "0PX1B",
+          "JI7W0",
+          "625MT",
+          "JU88S",
+          "7XG9Z",
+          "KAK8P",
+          "760W9",
+          "5WHWR"
+        ],
+        "grn": [
+          "AABO5",
+          "S0FO9",
+          "YPCAP",
+          "T8S5C",
+          "ZL8P5",
+          "9038E",
+          "PV3KW",
+          "ETRA9"
+        ],
+        "confidence": 1
       },
       "matching_method": null,
       "matched_by": null,
@@ -790,36 +770,33 @@
     {
       "id": 22,
       "invoice_line_id": "PLACEHOLDER_ID",
-      "match_status": "perfect",
+      "match_status": "probable",
       "result_data": {
-        "matched_row_ids": [
-          267,
-          268,
-          269,
-          270,
-          271,
-          272,
-          273
-        ],
-        "po": [
-          "QWIV0",
-          "GOXK2",
-          "BN4IU",
-          "5KOUT",
-          "GALKF",
-          "KYCKC",
-          "KEHPP"
-        ],
-        "grn": [
-          "VS1MY",
-          "HZ531",
-          "F9S4E",
-          "0YCD0",
-          "6U2CS",
-          "WABYA",
-          "XVWF4"
-        ],
-        "confidence": 1
+        "probable_candidates": [
+          {
+            "rank": 1,
+            "po": [
+              "2A65E",
+              "M04VU",
+              "YWT7Q",
+              "IAQUS",
+              "LR9SW",
+              "MP8LQ",
+              "JXIEZ"
+            ],
+            "grn": [
+              "R4V1G",
+              "YP5OO",
+              "DVQF4",
+              "TNBRK",
+              "GUJBJ",
+              "5WGA0",
+              "C4HHL"
+            ],
+            "confidence": 0.82,
+            "available_qty": 20
+          }
+        ]
       },
       "matching_method": "ai",
       "matched_by": "ai",
@@ -1129,34 +1106,27 @@
     {
       "id": 31,
       "invoice_line_id": "PLACEHOLDER_ID",
-      "match_status": "probable",
+      "match_status": "perfect",
       "result_data": {
-        "matched_row_ids": null,
-        "confidence": null,
-        "probable_candidates": [
-          {
-            "rank": 1,
-            "po": [
-              "UNKXT",
-              "EJ8EF",
-              "ZEKCA",
-              "OPJB2",
-              "1KM8H",
-              "C0HXE",
-              "RO681"
-            ],
-            "grn": [
-              "TSCFQ",
-              "FK6SW",
-              "SASW1",
-              "58CBM",
-              "5O15E",
-              "G7EOH",
-              "VFL9E"
-            ],
-            "confidence": 0.95
-          }
-        ]
+        "po": [
+          "XJ8YQ",
+          "L3SZJ",
+          "OEVNJ",
+          "AMKYV",
+          "6JW6B",
+          "ANOHT",
+          "FADE3"
+        ],
+        "grn": [
+          "HA00M",
+          "ADCEM",
+          "J64RS",
+          "E1JO1",
+          "P2XN1",
+          "WDRQI",
+          "QL3VO"
+        ],
+        "confidence": 1
       },
       "matching_method": null,
       "matched_by": null,
@@ -1167,36 +1137,29 @@
     {
       "id": 32,
       "invoice_line_id": "PLACEHOLDER_ID",
-      "match_status": "probable",
+      "match_status": "perfect",
       "result_data": {
-        "matched_row_ids": null,
-        "confidence": null,
-        "probable_candidates": [
-          {
-            "rank": 1,
-            "po": [
-              "K9Y1S",
-              "5DIKL",
-              "JTHUU",
-              "L4N78",
-              "4JNXY",
-              "YYKJ8",
-              "8B2ND",
-              "E6ESU"
-            ],
-            "grn": [
-              "3DOJX",
-              "DKA5M",
-              "WOHQF",
-              "GX5MS",
-              "0SKZ1",
-              "E6ATY",
-              "DF1Z4",
-              "CAPFH"
-            ],
-            "confidence": 0.96
-          }
-        ]
+        "po": [
+          "IY7XF",
+          "BSG4V",
+          "3QQTW",
+          "U3MC6",
+          "T8PLL",
+          "MZD1D",
+          "A67NN",
+          "QE2GO"
+        ],
+        "grn": [
+          "9JO5T",
+          "TX377",
+          "Q198A",
+          "C1IT8",
+          "CR5W6",
+          "XQNRY",
+          "XE05P",
+          "OLHJI"
+        ],
+        "confidence": 1
       },
       "matching_method": null,
       "matched_by": null,

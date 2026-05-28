@@ -21,13 +21,12 @@ from . import ai_matching
 
 router = APIRouter()
 
-# Data paths — pointing to the O2C data directory
-O2C_DIR = os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..', 'Downloads', 'home', 'ubuntu', 'O2C')
-O2C_DIR = os.path.abspath(O2C_DIR)
+# Data files bundled inside the cash module
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 
-BANK_STATEMENT_FILE = os.path.join(O2C_DIR, "Bank_Statement.csv")
-ORDERS_FILE = os.path.join(O2C_DIR, "Revenue_Orders.csv")
-GATEWAY_FILE = os.path.join(O2C_DIR, "Payment_Gateway.csv")
+BANK_STATEMENT_FILE = os.path.join(DATA_DIR, "Bank_Statement.csv")
+ORDERS_FILE = os.path.join(DATA_DIR, "Revenue_Orders.csv")
+GATEWAY_FILE = os.path.join(DATA_DIR, "Payment_Gateway.csv")
 
 # In-memory cache
 clients_data: Dict[str, Dict] = {}
