@@ -199,7 +199,7 @@ function LeftPanel({
   ];
 
   return (
-    <div className="flex flex-col" style={{ width: "40%", minWidth: 0, borderRight: "1px solid #E5E7EB" }}>
+    <div className="flex flex-col" style={{ width: "40%", minWidth: 0, borderRight: "1px solid #E5E7EB", height: "100%" }}>
       {/* Filter tabs */}
       <div style={{ display: "flex", borderBottom: "1px solid #E5E7EB", background: "#fff", flexShrink: 0 }}>
         {filterLabels.map(({ key, label }) => (
@@ -220,9 +220,9 @@ function LeftPanel({
         ))}
       </div>
 
-      {/* Table: header + rows + total — all inside one scroll container so widths always match */}
-      <div style={{ margin: "12px", border: "1px solid #E5E7EB", borderRadius: 8, overflow: "clip" }}>
-        <div style={{ overflowY: "auto", maxHeight: 400 }}>
+      {/* Table: header + rows + total — fills remaining height, rows scroll */}
+      <div style={{ margin: "12px", border: "1px solid #E5E7EB", borderRadius: 8, overflow: "hidden", flex: 1, display: "flex", flexDirection: "column" }}>
+        <div style={{ flex: 1, overflowY: "auto" }}>
           {/* Sticky column header */}
           <div style={{
             display: "grid", gridTemplateColumns: "3px 28px 32px 1fr 60px 72px 100px",
@@ -429,14 +429,14 @@ function RightPanel({
         </div>
       </div>
 
-      {/* GRN table: rounded container — header + rows + total all in one scroll container */}
-      <div style={{ margin: "12px", border: "1px solid #E5E7EB", borderRadius: 8, overflow: "clip" }}>
+      {/* GRN table: fills remaining height, rows scroll */}
+      <div style={{ margin: "12px", border: "1px solid #E5E7EB", borderRadius: 8, overflow: "hidden", flex: 1, display: "flex", flexDirection: "column" }}>
         {candidates.length === 0 ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 40, color: "#9CA3AF", fontSize: 14 }}>
             No GRN candidates found for this line item.
           </div>
         ) : (
-          <div style={{ overflowY: "auto", maxHeight: 400 }}>
+          <div style={{ flex: 1, overflowY: "auto" }}>
             {/* Sticky column header */}
             <div style={{
               display: "grid", gridTemplateColumns: cols, alignItems: "stretch",
