@@ -45,15 +45,27 @@ rsync -avz --progress \
   -e "ssh -i $PEM_KEY" \
   ./ "$EC2_USER@$EC2_IP:$APP_DIR/"
 
-# ── 3. Copy .env if it doesn't exist on server ───────────────────────────────
-echo "▶ Setting up .env..."
+# ── 3. Copy .env files ───────────────────────────────────────────────────────
+echo "▶ Setting up .env files..."
+
+# Root .env — docker-compose reads this for variable substitution (ANTHROPIC_API_KEY, AUTH_*)
+if [ -f .env ]; then
+  scp -i "$PEM_KEY" .env "$EC2_USER@$EC2_IP:$APP_DIR/.env"
+  echo "  Copied root .env"
+else
+  ssh -i "$PEM_KEY" "$EC2_USER@$EC2_IP" \
+    "[ -f $APP_DIR/.env ] || cp $APP_DIR/.env.example $APP_DIR/.env"
+  echo "  ⚠ No root .env found — copied .env.example on server. Edit $APP_DIR/.env with your ANTHROPIC_API_KEY!"
+fi
+
+# Backend .env
 if [ -f backend/.env ]; then
   scp -i "$PEM_KEY" backend/.env "$EC2_USER@$EC2_IP:$APP_DIR/backend/.env"
   echo "  Copied backend/.env"
 else
   ssh -i "$PEM_KEY" "$EC2_USER@$EC2_IP" \
     "[ -f $APP_DIR/backend/.env ] || cp $APP_DIR/backend/.env.example $APP_DIR/backend/.env"
-  echo "  Using .env.example on server (update CORS_ORIGIN and SECRET_KEY!)"
+  echo "  ⚠ No backend/.env found — copied .env.example on server. Edit $APP_DIR/backend/.env with your CORS_ORIGIN and SECRET_KEY!"
 fi
 
 # ── 4. Build & restart containers ────────────────────────────────────────────

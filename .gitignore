@@ -6,6 +6,10 @@
 # Claude Code local state (worktrees, etc.) — never commit
 .claude/
 
+# ── Root secrets ─────────────────────────────────────────────────────────────
+# Root .env is used by docker-compose for variable substitution — never push
+/.env
+
 # ── Backend ──────────────────────────────────────────────────────────────────
 
 # Secrets — never push real env

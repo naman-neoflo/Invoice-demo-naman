@@ -26,6 +26,12 @@ services:
       PORT: "3001"
       HOSTNAME: "0.0.0.0"
       BE_BASE_URL: "http://backend:8099"
+      # Anthropic API key for Neo chat (/api/neo/chat)
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      # Auth credentials (defaults match the hardcoded fallbacks in lib/auth.ts)
+      AUTH_USERNAME: "${AUTH_USERNAME:-neoflo}"
+      AUTH_PASSWORD: "${AUTH_PASSWORD:-n30fl0r0x0r!}"
+      AUTH_SESSION_TOKEN: "${AUTH_SESSION_TOKEN:-ok-2026}"
     depends_on:
       - backend
 
