@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { withAuthGuard } from "@/components/AuthGuard";
@@ -7,6 +7,40 @@ import { invoicesService } from "@/services";
 import { useToast } from "@/components/ui";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import { formatDateTime } from "@/utils/format";
+
+function InvoiceNotFound() {
+  const router = useRouter();
+  useEffect(() => {
+    const t = setTimeout(() => router.replace("/dashboard"), 3000);
+    return () => clearTimeout(t);
+  }, [router]);
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#F4F6F9" }}>
+      <div className="flex flex-col items-center gap-4 text-center" style={{ maxWidth: 360 }}>
+        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "#FEF2F2" }}>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <circle cx="11" cy="11" r="9" stroke="#DC2626" strokeWidth="1.6" />
+            <path d="M11 7v4M11 15h.01" stroke="#DC2626" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </div>
+        <div>
+          <p className="font-semibold" style={{ fontSize: 15, color: "#101828" }}>Invoice not found</p>
+          <p className="mt-1" style={{ fontSize: 13, color: "#6B7280" }}>
+            This invoice may have been removed or the demo was reset.
+            Redirecting you to the dashboard…
+          </p>
+        </div>
+        <button
+          onClick={() => router.replace("/dashboard")}
+          className="px-5 py-2 rounded-lg text-sm font-medium"
+          style={{ background: "#2563EB", color: "#fff", border: "none", cursor: "pointer" }}
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -40,10 +74,10 @@ interface RejectedData {
 
 function TimelineStepper({ timeline }: { timeline: TimelineEntry[] }) {
   const statusColor = (status: string) => {
-    if (status === "completed" || status === "approved") return "#34d399";
-    if (status === "active" || status === "in_progress") return "#fbbf24";
-    if (status === "rejected") return "#f87171";
-    return "rgba(255,255,255,0.2)";
+    if (status === "completed" || status === "approved") return "#22c55e";
+    if (status === "active" || status === "in_progress") return "#f59e0b";
+    if (status === "rejected") return "#ef4444";
+    return "#D1D5DB";
   };
 
   return (
@@ -59,20 +93,20 @@ function TimelineStepper({ timeline }: { timeline: TimelineEntry[] }) {
                 style={{ background: color, border: `2px solid ${color}` }}
               />
               {!isLast && (
-                <div className="w-0.5 flex-1 my-1" style={{ background: "rgba(255,255,255,0.08)", minHeight: 20 }} />
+                <div className="w-0.5 flex-1 my-1" style={{ background: "#E5E7EB", minHeight: 20 }} />
               )}
             </div>
             <div className="pb-4 min-w-0">
-              <span className="text-sm font-semibold" style={{ color: "#f1f5f9" }}>{entry.display_name}</span>
+              <span className="text-sm font-semibold" style={{ color: "#101828" }}>{entry.display_name}</span>
               {(entry.completed_at || entry.started_at) && (
-                <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>
+                <p className="text-xs mt-0.5" style={{ color: "#6B7280" }}>
                   {formatDateTime(entry.completed_at ?? entry.started_at)}
                 </p>
               )}
               {entry.status === "rejected" && (
                 <span
                   className="inline-flex items-center mt-0.5 px-1.5 py-0.5 rounded text-xs font-medium"
-                  style={{ background: "rgba(239,68,68,0.1)", color: "#f87171" }}
+                  style={{ background: "#FEF2F2", color: "#DC2626" }}
                 >
                   Rejected here
                 </span>
@@ -112,41 +146,37 @@ function RejectedPage() {
   }
 
   if (!data) {
-    return (
-      <div className="min-h-screen bg-surface-page flex items-center justify-center">
-        <p className="text-text-caption">Invoice not found.</p>
-      </div>
-    );
+    return <InvoiceNotFound />;
   }
 
   const rej = data.rejection;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#080c18" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "#F4F6F9" }}>
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div
         className="sticky top-0 z-10 border-b px-6 py-3"
-        style={{ background: "#0a0e1a", borderColor: "rgba(239,68,68,0.15)" }}
+        style={{ background: "#ffffff", borderColor: "#E5E7EB" }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
-            <Link href="/dashboard" className="hover:opacity-70 transition-opacity shrink-0" style={{ color: "#64748b" }}>
+            <Link href="/dashboard" className="hover:opacity-70 transition-opacity shrink-0" style={{ color: "#6B7280" }}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M10 3L6 8l4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="text-sm font-semibold" style={{ color: "#f1f5f9" }}>Rejected Invoice</h1>
+                <h1 className="text-sm font-semibold" style={{ color: "#101828" }}>Rejected Invoice</h1>
                 <span
                   className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
-                  style={{ background: "rgba(255,255,255,0.06)", color: "#64748b" }}
+                  style={{ background: "#F3F4F6", color: "#6B7280" }}
                 >
                   View Only
                 </span>
               </div>
-              <div className="flex items-center mt-0.5 gap-1.5 flex-wrap text-xs" style={{ color: "#64748b" }}>
+              <div className="flex items-center mt-0.5 gap-1.5 flex-wrap text-xs" style={{ color: "#6B7280" }}>
                 {data.invoice_number && <span>{data.invoice_number}</span>}
                 {data.vendor_name && <><span>|</span><span>{data.vendor_name}</span></>}
               </div>
@@ -154,7 +184,7 @@ function RejectedPage() {
           </div>
           <span
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold"
-            style={{ background: "#dc2626", color: "#fff" }}
+            style={{ background: "#DC2626", color: "#fff" }}
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <circle cx="7" cy="7" r="6" stroke="#fff" strokeWidth="1.4" />
@@ -171,7 +201,7 @@ function RejectedPage() {
         {/* Rejection reason banner */}
         <div
           className="rounded-xl px-5 py-4 mb-6 flex gap-4"
-          style={{ background: "rgba(239,68,68,0.08)", border: "1.5px solid rgba(239,68,68,0.25)" }}
+          style={{ background: "#FEF2F2", border: "1.5px solid #FECACA" }}
         >
           <div className="shrink-0 mt-0.5">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -180,17 +210,17 @@ function RejectedPage() {
             </svg>
           </div>
           <div className="flex flex-col gap-1 min-w-0">
-            <span className="text-sm font-semibold" style={{ color: "#fca5a5" }}>Invoice Rejection Reason</span>
-            <p className="text-sm" style={{ color: "#f87171" }}>{rej.reason}</p>
-            <div className="flex flex-wrap gap-3 mt-1 text-xs" style={{ color: "rgba(248,113,113,0.7)" }}>
+            <span className="text-sm font-semibold" style={{ color: "#991B1B" }}>Invoice Rejection Reason</span>
+            <p className="text-sm" style={{ color: "#DC2626" }}>{rej.reason}</p>
+            <div className="flex flex-wrap gap-3 mt-1 text-xs" style={{ color: "#B91C1C" }}>
               {rej.stage_display && (
-                <span>Stage: <strong>{rej.stage_display}</strong></span>
+                <span>Stage: <strong style={{ color: "#991B1B" }}>{rej.stage_display}</strong></span>
               )}
               {rej.actor_name && (
-                <span>By: <strong>{rej.actor_name}</strong>{rej.actor_role ? ` (${rej.actor_role})` : ""}</span>
+                <span>By: <strong style={{ color: "#991B1B" }}>{rej.actor_name}</strong>{rej.actor_role ? ` (${rej.actor_role})` : ""}</span>
               )}
               {rej.rejected_at && (
-                <span>At: <strong>{formatDateTime(rej.rejected_at)}</strong></span>
+                <span>At: <strong style={{ color: "#991B1B" }}>{formatDateTime(rej.rejected_at)}</strong></span>
               )}
             </div>
           </div>
@@ -201,9 +231,9 @@ function RejectedPage() {
 
           {/* Left: invoice summary card */}
           <div className="lg:col-span-2">
-            <div className="rounded-xl overflow-hidden" style={{ background: "#0e1424", border: "1px solid rgba(239,68,68,0.15)" }}>
-              <div className="px-5 py-4 border-b" style={{ borderColor: "rgba(239,68,68,0.1)" }}>
-                <span className="text-sm font-semibold" style={{ color: "#f1f5f9" }}>Invoice Information</span>
+            <div className="rounded-xl overflow-hidden" style={{ background: "#ffffff", border: "1px solid #E5E7EB" }}>
+              <div className="px-5 py-4 border-b" style={{ borderColor: "#E5E7EB" }}>
+                <span className="text-sm font-semibold" style={{ color: "#101828" }}>Invoice Information</span>
               </div>
               <div className="px-5 py-5 grid grid-cols-2 gap-x-10 gap-y-4 sm:grid-cols-3">
                 {[
@@ -215,10 +245,10 @@ function RejectedPage() {
                   { label: "Rejected By", value: rej.actor_name || "—" },
                 ].map(f => (
                   <div key={f.label} className="flex flex-col gap-0.5">
-                    <span className="text-xs font-medium" style={{ color: "#64748b" }}>{f.label}</span>
+                    <span className="text-xs font-medium" style={{ color: "#6B7280" }}>{f.label}</span>
                     <span
                       className="text-sm font-medium"
-                      style={{ color: f.label === "Current Status" ? "#f87171" : "#f1f5f9" }}
+                      style={{ color: f.label === "Current Status" ? "#DC2626" : "#101828" }}
                     >
                       {f.value || "—"}
                     </span>
@@ -229,19 +259,19 @@ function RejectedPage() {
           </div>
 
           {/* Right: timeline */}
-          <div className="rounded-xl" style={{ background: "#0e1424", border: "1px solid rgba(239,68,68,0.15)" }}>
-            <div className="px-5 py-4 border-b flex items-center gap-2" style={{ borderColor: "rgba(239,68,68,0.1)" }}>
+          <div className="rounded-xl" style={{ background: "#ffffff", border: "1px solid #E5E7EB" }}>
+            <div className="px-5 py-4 border-b flex items-center gap-2" style={{ borderColor: "#E5E7EB" }}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <circle cx="8" cy="8" r="6" stroke="#64748b" strokeWidth="1.3" />
-                <path d="M8 5v3.5l2.5 1.5" stroke="#64748b" strokeWidth="1.3" strokeLinecap="round" />
+                <circle cx="8" cy="8" r="6" stroke="#6B7280" strokeWidth="1.3" />
+                <path d="M8 5v3.5l2.5 1.5" stroke="#6B7280" strokeWidth="1.3" strokeLinecap="round" />
               </svg>
-              <span className="text-sm font-semibold" style={{ color: "#f1f5f9" }}>Processing Timeline</span>
+              <span className="text-sm font-semibold" style={{ color: "#101828" }}>Processing Timeline</span>
             </div>
             <div className="px-5 py-5">
               {data.timeline.length > 0 ? (
                 <TimelineStepper timeline={data.timeline} />
               ) : (
-                <p className="text-sm" style={{ color: "#64748b" }}>No timeline data.</p>
+                <p className="text-sm" style={{ color: "#6B7280" }}>No timeline data.</p>
               )}
             </div>
           </div>

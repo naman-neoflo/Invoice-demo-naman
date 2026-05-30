@@ -128,7 +128,7 @@ function CashExceptions({ selectedClient }: Props) {
       console.error('Error fetching AI suggestions:', err);
       setAiSuggestions({
         success: false,
-        error: 'Failed to get AI suggestions. Make sure ANTHROPIC_API_KEY is set.',
+        error: 'Could not reach the AI suggestions endpoint. Check that the backend is running.',
       });
     } finally {
       setLoadingAI(false);
@@ -588,12 +588,17 @@ function CashExceptions({ selectedClient }: Props) {
                       {aiSuggestions.error || 'AI analysis unavailable'}
                     </Alert>
                   ) : (
-                    <Box sx={{ backgroundColor: '#F3E5F5', borderRadius: 2, p: 2, mb: 2 }}>
+                    <Box sx={{ backgroundColor: aiSuggestions.demo_mode ? '#FFF8E1' : '#F3E5F5', borderRadius: 2, p: 2, mb: 2, border: aiSuggestions.demo_mode ? '1px solid #FFE082' : 'none' }}>
+                      {aiSuggestions.demo_mode && (
+                        <Alert severity="info" sx={{ mb: 1.5, fontSize: 12 }}>
+                          Demo mode — set <strong>ANTHROPIC_API_KEY</strong> to enable full Claude analysis.
+                        </Alert>
+                      )}
                       {aiSuggestions.analysis && (
                         <Box sx={{ mb: 2 }}>
                           <Typography
                             variant="caption"
-                            sx={{ color: '#7C4DFF', fontWeight: 600 }}
+                            sx={{ color: aiSuggestions.demo_mode ? '#F57F17' : '#7C4DFF', fontWeight: 600 }}
                           >
                             Analysis
                           </Typography>

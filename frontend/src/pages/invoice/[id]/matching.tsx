@@ -38,7 +38,8 @@ function MatchingPage() {
   const tabStorageKey = id ? `matching-tab-${id}` : null;
   const { user } = useAuth();
   const { toast } = useToast();
-  const canEdit = user?.role === "admin" || user?.role === "editor";
+  // All authenticated roles can process items per PRD §3.2
+  const canEdit = !!user;
   const isCompleted = usePipelineCompleted(id);
   useStagesStatus(id);
 
@@ -61,8 +62,10 @@ function MatchingPage() {
   const [liData, setLiData] = useState<LineItemMatchingData | null>(null);
   // Line-items variance gate — set by <LineItemsTab onVarianceChange>. The
   // line_item_matching stage can only be approved when the Invoice↔GRN
-  // variance is balanced or within tolerance (mirrors invoice-validator-fe).
-  const [lineOk, setLineOk] = useState(true);
+  // variance is balanced or within tolerance AND no items are still in
+  // "probable" or "no_match" status.
+  // Start false so Next stays disabled until LineItemsTab confirms it's OK.
+  const [lineOk, setLineOk] = useState(false);
   const [lineStatus, setLineStatus] = useState<string>("balanced");
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
@@ -169,16 +172,12 @@ function MatchingPage() {
   const handleApprove = async () => {
     if (!id) return;
 
-    // Gate: block approval while the line-item variance exceeds tolerance
-    // (or no GRN line is selected). Mirrors invoice-validator-fe's
-    // lineItemCanProceed check on the Matching screen.
-    if (liData?.stage_status === "in_review" && !lineOk) {
-      toast(
-        lineStatus === "unchecked"
-          ? "Select at least one GRN line item to match."
-          : "Invoice vs GRN variance exceeds tolerance.",
-        "error",
-      );
+    // Gate: block approval while any line item is still probable or no_match.
+    const liDataHasUnresolved = (liData?.matching?.per_item_matching ?? []).some(
+      (item) => item.match_status === "probable" || item.match_status === "no_match"
+    );
+    if (liData?.stage_status === "in_review" && liDataHasUnresolved && !lineOk) {
+      toast("Confirm all probable and unmatched line items before proceeding.", "error");
       return;
     }
 
@@ -350,10 +349,22 @@ function MatchingPage() {
             const anyInReview =
               metaData?.stage_status === "in_review" || liData?.stage_status === "in_review";
 
+            // Block Next whenever any line item is still probable or no_match.
+            // Use per_item_matching (backend applies confirmed_mappings before serving)
+            // so previously-confirmed items already read as "matched".
+            // lineOk (from LineItemsTab's onVarianceChange) flips to true once the
+            // user confirms all remaining items in the current session.
+            const liDataHasUnresolved = (liData?.matching?.per_item_matching ?? []).some(
+              (item) => item.match_status === "probable" || item.match_status === "no_match"
+            );
+            const lineItemsBlocked = liDataHasUnresolved && !lineOk;
+
             if (!anyInReview) {
               return (
                 <AntButton
                   type="primary"
+                  disabled={lineItemsBlocked}
+                  title={lineItemsBlocked ? "Confirm all probable and unmatched line items before proceeding" : undefined}
                   onClick={() => router.push(`/invoice/${id}/bill-posting`)}
                 >
                   Next
@@ -361,12 +372,10 @@ function MatchingPage() {
               );
             }
 
-            const lineBlocked =
-              liData?.stage_status === "in_review" && !lineOk;
-            const nextTooltip = lineBlocked
+            const nextTooltip = lineItemsBlocked
               ? lineStatus === "unchecked"
                 ? "Select at least one GRN line item to match"
-                : "Invoice vs GRN variance exceeds tolerance"
+                : "Confirm all probable and unmatched line items before proceeding"
               : undefined;
             return (
               <Space>
@@ -375,7 +384,7 @@ function MatchingPage() {
                   type="primary"
                   onClick={handleApprove}
                   loading={confirming}
-                  disabled={!canEdit || lineBlocked}
+                  disabled={!canEdit || lineItemsBlocked}
                   title={nextTooltip}
                 >
                   Next

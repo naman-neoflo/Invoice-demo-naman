@@ -20,6 +20,46 @@ const PdfViewer = dynamic(
   { ssr: false, loading: () => <div className="flex h-full items-center justify-center"><Loader size="large" /></div> }
 );
 
+// ── Shared not-found fallback ─────────────────────────────────────────────────
+// Shown whenever the invoice data fails to load (404, auth error, etc.).
+// Auto-redirects to the dashboard after 3 s so the user is never stranded.
+function InvoiceNotFound() {
+  const router = useRouter();
+  useEffect(() => {
+    const t = setTimeout(() => router.replace("/dashboard"), 3000);
+    return () => clearTimeout(t);
+  }, [router]);
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#F4F6F9" }}>
+      <div className="flex flex-col items-center gap-4 text-center" style={{ maxWidth: 360 }}>
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center"
+          style={{ background: "#FEF2F2" }}
+        >
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <circle cx="11" cy="11" r="9" stroke="#DC2626" strokeWidth="1.6" />
+            <path d="M11 7v4M11 15h.01" stroke="#DC2626" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </div>
+        <div>
+          <p className="font-semibold" style={{ fontSize: 15, color: "#101828" }}>Invoice not found</p>
+          <p className="mt-1" style={{ fontSize: 13, color: "#6B7280" }}>
+            This invoice may have been removed or the demo was reset.
+            Redirecting you to the dashboard…
+          </p>
+        </div>
+        <button
+          onClick={() => router.replace("/dashboard")}
+          className="px-5 py-2 rounded-lg text-sm font-medium"
+          style={{ background: "#2563EB", color: "#fff", border: "none", cursor: "pointer" }}
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface MetaField { field: string; value: string; }
@@ -80,7 +120,8 @@ function ReviewPage() {
   const { id } = router.query as { id: string };
   const { user } = useAuth();
   const { toast } = useToast();
-  const canEdit = user?.role === "admin" || user?.role === "editor";
+  // All authenticated roles can process items per PRD §3.2
+  const canEdit = !!user;
   const isCompleted = usePipelineCompleted(id);
 
   const [data, setData] = useState<ExtractionData | null>(null);
@@ -299,11 +340,7 @@ function ReviewPage() {
   }
 
   if (!data) {
-    return (
-      <div className="min-h-screen bg-surface-page flex items-center justify-center">
-        <p className="text-text-caption">Invoice not found.</p>
-      </div>
-    );
+    return <InvoiceNotFound />;
   }
 
   if (transitioning) {

@@ -21,6 +21,76 @@ def init_client(api_key: str = None):
     return False
 
 
+def _demo_ai_response(transaction: Dict, candidate_orders: List[Dict]) -> Dict:
+    """
+    Return a realistic-looking demo AI response when ANTHROPIC_API_KEY is not set.
+    Picks the top 2 candidates by name similarity (simple heuristic) so the UI
+    always shows something useful in demos without a real API call.
+    """
+    import difflib
+
+    txn_name = (transaction.get("name") or transaction.get("bank_name") or "").lower()
+    txn_amount = float(transaction.get("amount") or transaction.get("bank_amount") or 0)
+
+    scored = []
+    for order in candidate_orders[:15]:
+        store = (order.get("store_name") or "").lower()
+        name_sim = difflib.SequenceMatcher(None, txn_name, store).ratio()
+
+        try:
+            order_amt = float(order.get("amount") or order.get("order_amount") or 0)
+        except (ValueError, TypeError):
+            order_amt = 0
+
+        amount_diff = abs(txn_amount - order_amt) / max(txn_amount, 1)
+        amount_score = max(0.0, 1.0 - amount_diff)
+        score = name_sim * 0.6 + amount_score * 0.4
+        scored.append((score, name_sim, order))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    top = scored[:3]
+
+    suggestions = []
+    for rank, (score, name_sim, order) in enumerate(top):
+        confidence = round(min(0.95, score + 0.1 * (2 - rank)), 2)
+        if confidence < 0.25:
+            continue
+        path = "bank_order_only"
+        factors = [f"Name similarity {round(name_sim * 100)}%"]
+        risks = []
+        if name_sim > 0.7:
+            factors.append("Payer name closely matches store name")
+        else:
+            risks.append("Payer name is a partial match — verify manually")
+        suggestions.append({
+            "order_id": order.get("order_id", "—"),
+            "confidence": confidence,
+            "reasoning": (
+                f"Name similarity {round(name_sim * 100)}% between payer '{transaction.get('name','')}' "
+                f"and store '{order.get('store_name','')}'. "
+                f"Amount proximity score {round(score * 100)}%."
+            ),
+            "match_factors": factors,
+            "risk_factors": risks,
+            "reconciliation_path": path,
+        })
+
+    return {
+        "success": True,
+        "analysis": (
+            "Demo mode — ANTHROPIC_API_KEY not configured. "
+            "Suggestions below are generated using rule-based heuristics (name similarity + amount proximity). "
+            "Set ANTHROPIC_API_KEY to enable full Claude-powered analysis."
+        ),
+        "suggestions": suggestions,
+        "recommendation": (
+            f"Top candidate: {suggestions[0]['order_id']} (confidence {suggestions[0]['confidence']:.0%}). "
+            "Verify payer name and amount before confirming."
+        ) if suggestions else "No strong candidates found. Manual review recommended.",
+        "demo_mode": True,
+    }
+
+
 def get_ai_match_suggestions(
     transaction: Dict,
     candidate_orders: List[Dict],
@@ -45,11 +115,8 @@ def get_ai_match_suggestions(
     if not client:
         # Try to initialize with environment variable
         if not init_client():
-            return {
-                'success': False,
-                'error': 'Claude API not configured. Set ANTHROPIC_API_KEY environment variable.',
-                'suggestions': []
-            }
+            # Return a realistic demo response so the UI still looks good in demos
+            return _demo_ai_response(transaction, candidate_orders)
 
     # Prepare transaction summary
     txn_summary = f"""

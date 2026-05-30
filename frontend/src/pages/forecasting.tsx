@@ -273,10 +273,10 @@ const AR_SUB_TO_TAB: Record<string, TabId> = {
 function ForecastingPage() {
   const { user } = useAuth();
 
-  // Admins see every tab; non-admins see only what ar_sub_access permits.
+  // Managers see every tab; non-managers see only what ar_sub_access permits.
   // Empty ar_sub_access = no restriction → show all tabs.
   const visibleTabs = useMemo(() => {
-    if (!user || user.role === 'admin') return TABS;
+    if (!user || user.role === 'tenant_admin' || user.role === 'workspace_admin') return TABS;
     const sub = user.ar_sub_access ?? [];
     if (sub.length === 0) return TABS;
     const allowed = new Set(sub.map(k => AR_SUB_TO_TAB[k]).filter(Boolean));
@@ -284,7 +284,7 @@ function ForecastingPage() {
   }, [user]);
 
   const [activeTab, setActiveTab] = useState<TabId>(() => {
-    if (!user || user.role === 'admin') return 'dashboard';
+    if (!user || user.role === 'tenant_admin' || user.role === 'workspace_admin') return 'dashboard';
     const sub = user.ar_sub_access ?? [];
     if (sub.length === 0) return 'dashboard';
     const allowed = sub.map(k => AR_SUB_TO_TAB[k]).filter(Boolean);

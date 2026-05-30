@@ -176,12 +176,12 @@ export function BillPostingTable({
       },
     ];
 
-    // VAT Tax Code — omitted when admin has masked the vat_tax_code erp field.
+    // VAT/GST Tax Code — omitted when admin has masked the vat_tax_code erp field.
     if (showVatColumn) {
       base.push({
         // mirrors VatTaxCodeSelect from the main app:
         // showSearch + allowClear (when editable), word-wrap popup options.
-        title: <span className="whitespace-nowrap">VAT Tax Code</span>,
+        title: <span className="whitespace-nowrap">VAT/GST Tax Code</span>,
         key: "vat_tax_code",
         width: 200,
         onHeaderCell: () => ({ style: { background: "#f7f8f9", fontWeight: 500, color: "#6b7280", whiteSpace: "nowrap" as const } }),

@@ -4,9 +4,9 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { ToastProvider } from "@/components/ui";
 import { AuthProvider } from "@/context/AuthContext";
-import { NavSidebar } from "@/components/NavSidebar";
+import { NavSidebar, PreviewBanner } from "@/components/NavSidebar";
 
-const AUTH_ROUTES = ["/auth/login", "/auth/signup"];
+const AUTH_ROUTES = ["/auth/login", "/auth/signup", "/auth/accept-invite"];
 const SIDEBAR_EXPANDED = 240;
 const SIDEBAR_COLLAPSED = 64;
 
@@ -29,6 +29,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
           minHeight: "100vh",
         }}
       >
+        <PreviewBanner />
         {children}
       </div>
     </>

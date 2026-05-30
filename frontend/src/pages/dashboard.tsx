@@ -445,8 +445,9 @@ function DashboardPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast } = useToast();
-  const isAdmin = user?.role === "admin";
-  const canUpload = user?.role === "admin" || user?.role === "editor";
+  const isAdmin = user?.role === "tenant_admin" || user?.role === "workspace_admin";
+  // All authenticated roles can process items per PRD §3.2
+  const canUpload = !!user;
 
   // ── STP toggle ────────────────────────────────────────────────────────────
   const [stpEnabled, setStpEnabled] = useState(false);
@@ -480,6 +481,17 @@ function DashboardPage() {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [extractingIds, setExtractingIds] = useState<Set<string>>(new Set());
 
+  // Invoices uploaded while Auto-Process (STP) is ON stay in this set until
+  // their status reaches a terminal stage (ERP Posting / posted / rejected / error).
+  // While in this set: Review button is disabled + spinner shows next to the stage tag.
+  const [stpProcessingIds, setStpProcessingIds] = useState<Set<string>>(new Set());
+
+  // Statuses that release the STP lock:
+  //   • bill_posting / posted / rejected / error  → STP ran to completion (or failed)
+  //   • extraction                                → STP couldn't advance the invoice
+  //     (e.g. Yellow Brick fixture doesn't support full pipeline); let the user review.
+  const STP_TERMINAL = new Set(["extraction", "bill_posting", "posted", "rejected", "error"]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
 
@@ -500,6 +512,18 @@ function DashboardPage() {
     try {
       const data = await invoicesService.list();
       setInvoices(data.items);
+
+      // Auto-clear STP processing state once an invoice reaches a terminal status.
+      setStpProcessingIds(prev => {
+        if (prev.size === 0) return prev;
+        const next = new Set(prev);
+        data.items.forEach(inv => {
+          if (next.has(inv.id) && STP_TERMINAL.has(inv.status)) {
+            next.delete(inv.id);
+          }
+        });
+        return next.size === prev.size ? prev : next;
+      });
     } catch { /* silent */ } finally { setLoading(false); }
   }, []);
 
@@ -560,6 +584,8 @@ function DashboardPage() {
   // Determine action label for an invoice (mirrors validator-fe's getActionButton)
   const getAction = (inv: InvoiceListItem): { label: string; primary: boolean; disabled: boolean } => {
     if (extractingIds.has(inv.id)) return { label: "Processing", primary: false, disabled: true };
+    // STP-uploaded invoice: keep button disabled until ERP Posting / terminal status
+    if (stpProcessingIds.has(inv.id)) return { label: "Processing", primary: false, disabled: true };
     if (inv.status === "posted") return { label: "View", primary: false, disabled: false };
     if (inv.status === "rejected") return { label: "View", primary: false, disabled: false };
     if (inv.status === "error") return { label: "View", primary: false, disabled: true };
@@ -859,7 +885,10 @@ function DashboardPage() {
                         </td>
                         {/* Current Stage */}
                         <td style={{ padding: "8px 16px" }}>
-                          <StageTag status={inv.status} loading={extractingIds.has(inv.id)} />
+                          <StageTag
+                            status={inv.status}
+                            loading={extractingIds.has(inv.id) || stpProcessingIds.has(inv.id)}
+                          />
                         </td>
                         {/* Action */}
                         <td style={{ padding: "8px 16px" }}>
@@ -958,11 +987,18 @@ function DashboardPage() {
         open={uploadOpen}
         onClose={() => { setUploadOpen(false); fetchInvoices(); }}
         onUploaded={(invoiceId) => {
-          setExtractingIds(prev => new Set([...prev, invoiceId]));
+          if (stpEnabled) {
+            // STP mode: keep disabled + spinner until status reaches ERP Posting.
+            // The polling loop (every 8 s) will clear this automatically.
+            setStpProcessingIds(prev => new Set([...prev, invoiceId]));
+          } else {
+            // Non-STP: show a brief "Processing" state while extraction runs (~5 s).
+            setExtractingIds(prev => new Set([...prev, invoiceId]));
+            setTimeout(() => {
+              setExtractingIds(prev => { const n = new Set(prev); n.delete(invoiceId); return n; });
+            }, 5000);
+          }
           fetchInvoices();
-          setTimeout(() => {
-            setExtractingIds(prev => { const n = new Set(prev); n.delete(invoiceId); return n; });
-          }, 5000);
         }}
       />
     </div>

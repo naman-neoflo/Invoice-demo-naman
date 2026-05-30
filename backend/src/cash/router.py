@@ -18,8 +18,13 @@ from .matching import MatchingEngine, parse_amount
 from .three_way_matching import ThreeWayMatchingEngine, load_payment_gateway_data
 from . import database as db
 from . import ai_matching
+from ..config import settings
 
 router = APIRouter()
+
+# Initialise AI client as soon as the router loads so the key from .env is used
+if settings.anthropic_api_key:
+    ai_matching.init_client(settings.anthropic_api_key)
 
 # Data files bundled inside the cash module
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
@@ -280,6 +285,59 @@ async def take_action(client_id: str, transaction_id: str, action: ExceptionActi
 
     db.save_exception_action(client_id, transaction_id, action_type, action.order_id, action.note, new_status)
     return ActionResponse(success=True, message=message, transaction_id=transaction_id, new_status=new_status)
+
+
+@router.get("/ai/suggestions/{client_id}/{transaction_id}")
+async def get_ai_suggestions(client_id: str, transaction_id: str):
+    """
+    Return AI-powered match suggestions for a single exception transaction.
+    Uses Claude to analyse the transaction and rank candidate orders.
+    Returns a safe envelope even when ANTHROPIC_API_KEY is absent.
+    """
+    if client_id not in three_way_engines:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    engine = three_way_engines[client_id]
+    client = clients_data.get(client_id, {})
+
+    # Locate the transaction in the engine results
+    txn_result = next(
+        (r for r in engine.results if r.get("transaction_id") == transaction_id),
+        None,
+    )
+    if not txn_result:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+
+    # Build a clean transaction dict for the AI
+    transaction = {
+        "transaction_id": txn_result.get("transaction_id"),
+        "name": txn_result.get("bank_name") or txn_result.get("name", ""),
+        "description": txn_result.get("bank_description") or txn_result.get("description", ""),
+        "amount": txn_result.get("bank_amount") or txn_result.get("amount", 0),
+        "transaction_date": txn_result.get("bank_date") or txn_result.get("transaction_date", ""),
+        "payment_channel": txn_result.get("payment_channel", ""),
+        "bank_reference": txn_result.get("bank_reference", ""),
+    }
+
+    # Candidate orders — take up to 20 from the client's order pool
+    orders_data: list = client.get("orders_data", [])
+    candidates = orders_data[:20]
+
+    # Relevant gateway rows — those whose bank_settlement_ref matches this txn's reference
+    bank_ref = transaction.get("bank_reference", "")
+    gateway_data: list = client.get("gateway_data", [])
+    gateway_matches = [
+        g for g in gateway_data
+        if bank_ref and g.get("bank_settlement_ref") == bank_ref
+    ]
+    gateway_context = gateway_matches or gateway_data[:5]
+
+    result = ai_matching.get_ai_match_suggestions(
+        transaction=transaction,
+        candidate_orders=candidates,
+        gateway_data=gateway_context,
+    )
+    return result
 
 
 @router.post("/run-matching/{client_id}", response_model=MatchingRunResponse)

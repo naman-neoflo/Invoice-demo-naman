@@ -1,4 +1,14 @@
+from pathlib import Path
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+
+# Resolve the .env file relative to this file so it works regardless of
+# the working directory the server is started from.
+_ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
+
+# Explicitly load .env into os.environ first — pydantic-settings v2 reads
+# from os.environ reliably even when the class Config env_file parsing fails.
+load_dotenv(_ENV_FILE, override=True)
 
 
 class Settings(BaseSettings):
@@ -13,6 +23,9 @@ class Settings(BaseSettings):
     zoho_client_secret: str = ""
     zoho_refresh_token: str = ""
 
+    # Anthropic / Claude
+    anthropic_api_key: str = ""
+
     # Gmail ingestion (svc-tools@neoflo.ai)
     gmail_enabled: bool = False
     gmail_client_id: str = ""
@@ -22,7 +35,7 @@ class Settings(BaseSettings):
     gmail_poll_interval: int = 30  # seconds
 
     class Config:
-        env_file = ".env"
+        env_file = str(_ENV_FILE)
         extra = "ignore"
 
 

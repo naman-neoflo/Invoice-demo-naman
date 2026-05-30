@@ -25,12 +25,47 @@ import type {
 
 const { Title } = Typography;
 
+function InvoiceNotFound() {
+  const router = useRouter();
+  useEffect(() => {
+    const t = setTimeout(() => router.replace("/dashboard"), 3000);
+    return () => clearTimeout(t);
+  }, [router]);
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#F4F6F9" }}>
+      <div className="flex flex-col items-center gap-4 text-center" style={{ maxWidth: 360 }}>
+        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "#FEF2F2" }}>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <circle cx="11" cy="11" r="9" stroke="#DC2626" strokeWidth="1.6" />
+            <path d="M11 7v4M11 15h.01" stroke="#DC2626" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </div>
+        <div>
+          <p className="font-semibold" style={{ fontSize: 15, color: "#101828" }}>Invoice not found</p>
+          <p className="mt-1" style={{ fontSize: 13, color: "#6B7280" }}>
+            This invoice may have been removed or the demo was reset.
+            Redirecting you to the dashboard…
+          </p>
+        </div>
+        <button
+          onClick={() => router.replace("/dashboard")}
+          className="px-5 py-2 rounded-lg text-sm font-medium"
+          style={{ background: "#2563EB", color: "#fff", border: "none", cursor: "pointer" }}
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function BillPostingPage() {
   const router = useRouter();
   const { id } = router.query as { id: string };
   const { user } = useAuth();
   const { toast } = useToast();
-  const canEdit = user?.role === "admin" || user?.role === "editor";
+  // All authenticated roles can process items per PRD §3.2
+  const canEdit = !!user;
 
   const [data, setData] = useState<BillPostingData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -127,7 +162,7 @@ function BillPostingPage() {
         const v = lineEdits.get(li.id)?.vat_tax_code ?? li.vat_tax_code ?? "";
         return !v;
       });
-      if (blank.length > 0) missing.push("VAT Tax Code");
+      if (blank.length > 0) missing.push("VAT/GST Tax Code");
     }
     if (mandatoryErpFields.has("wht_tax_code") && (data.bill_header?.wht ?? 0) > 0) {
       const blank = data.line_items.filter(li => {
@@ -194,7 +229,7 @@ function BillPostingPage() {
   }
 
   if (!data) {
-    return <div className="min-h-screen bg-surface-page flex items-center justify-center"><p className="text-text-caption">Invoice not found.</p></div>;
+    return <InvoiceNotFound />;
   }
 
   // A bill is "posted" when EITHER the pipeline_runs.status is completed
@@ -290,20 +325,31 @@ function BillPostingPage() {
                   <strong>Posted to ERP successfully</strong>
                 </span>
               </div>
-              <div className="flex items-center gap-1 flex-shrink-0 text-sm text-green-700">
-                <span className="font-medium mr-1">Attachments:</span>
-                {/* Zoho bill deep-link — populated server-side by Post-to-ERP.
-                    The original invoice PDF is intentionally not listed here. */}
-                {data.erp?.zoho_url && (
-                  <a
-                    className="flex items-center gap-1 hover:underline text-green-700"
-                    href={data.erp.zoho_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <PaperClipOutlined />
-                    <span>{data.erp.bill_number || "Zoho bill"}</span>
-                  </a>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {data.erp?.bill_number && (
+                  <>
+                    {/* Bill number badge — click to copy */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(data.erp!.bill_number!);
+                      }}
+                      title="Click to copy bill number"
+                      className="flex items-center gap-1 px-2 py-1 rounded text-xs font-mono font-semibold text-green-800 bg-green-100 border border-green-300 hover:bg-green-200 transition-colors cursor-copy"
+                    >
+                      <PaperClipOutlined />
+                      {data.erp.bill_number}
+                    </button>
+                    {/* Open Zoho Bills list */}
+                    <a
+                      href={data.erp?.zoho_url || "https://books.zoho.in"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-white bg-green-600 hover:bg-green-700 transition-colors"
+                    >
+                      View in Zoho ↗
+                    </a>
+                  </>
                 )}
               </div>
             </div>

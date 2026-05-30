@@ -603,7 +603,8 @@ function ManualSelectionDrawer({
   const grnTotal = selectedGrnCandidates.reduce((s, g) => s + g.line_total, 0);
   const qtyDiff = grnQty - invoiceItem.quantity;
   const totalDiff = round2(grnTotal - invoiceItem.line_total);
-  const canConfirm = selectedGrnCandidates.length > 0;
+  const invoiceExceedsGrn = selectedGrnCandidates.length > 0 && round2(invoiceItem.line_total - grnTotal) > 0.01;
+  const canConfirm = selectedGrnCandidates.length > 0 && !invoiceExceedsGrn;
 
   return (
     <div style={{
@@ -646,18 +647,20 @@ function ManualSelectionDrawer({
           {selectedGrnCandidates.length === 0 ? (
             <div style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 8 }}>—</div>
           ) : (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+            <div style={{ maxHeight: 56, overflowY: "auto", display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 6 }}>
               {selectedGrnCandidates.map(g => (
                 <div
                   key={g.id}
                   style={{
-                    display: "inline-flex", alignItems: "center", gap: 6,
-                    padding: "4px 10px", borderRadius: 20,
+                    display: "inline-flex", alignItems: "center", gap: 4,
+                    padding: "3px 8px", borderRadius: 20,
                     border: "1px solid #E5E7EB", background: "#F9FAFB",
-                    fontSize: 13, color: "#101828",
+                    fontSize: 12, color: "#374151", whiteSpace: "nowrap",
                   }}
                 >
-                  {g.description} · {g.quantity}
+                  <span style={{ fontWeight: 600, color: "#2563EB" }}>{g.grn_number}</span>
+                  <span style={{ color: "#9CA3AF" }}>·</span>
+                  <span>qty {g.quantity}</span>
                 </div>
               ))}
             </div>
@@ -795,10 +798,18 @@ export function LineItemsTab({
     return "exceeds_tolerance";
   }, [checkedGrnIds, perItem, localMatched, tolerance]);
 
+  const hasUnresolved = useMemo(() => {
+    return perItem.some(item => {
+      const eff: InvoiceLineStatus = localMatched.has(item.id) ? "matched" : item.match_status;
+      return eff === "no_match" || eff === "probable";
+    });
+  }, [perItem, localMatched]);
+
   useEffect(() => {
-    const ok = varianceStatus === "balanced" || varianceStatus === "within_tolerance";
+    const varianceOk = varianceStatus === "balanced" || varianceStatus === "within_tolerance";
+    const ok = varianceOk && !hasUnresolved;
     onVarianceChange?.(ok, varianceStatus);
-  }, [varianceStatus, onVarianceChange]);
+  }, [varianceStatus, hasUnresolved, onVarianceChange]);
 
   function effectiveStatus(item: InvoiceLinePerItem): InvoiceLineStatus {
     if (localMatched.has(item.id)) return "matched";
