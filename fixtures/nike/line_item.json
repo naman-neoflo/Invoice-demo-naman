@@ -793,8 +793,10 @@
               "5WGA0",
               "C4HHL"
             ],
-            "confidence": 0.82,
-            "available_qty": 20
+            "quantities": [3, 3, 3, 3, 5, 3, 4],
+            "unit_price": 220.86,
+            "available_qty": 24,
+            "confidence": 0.95
           }
         ]
       },
@@ -802,7 +804,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:46:19.000Z",
-      "reasoning": "Perfect match found. All 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU FZ1689-004. Total quantity 24 units matches invoice exactly. All variants have identical unit price 220.86. Line total calculation: 24 \u00d7 220.86 = 5,300.64 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Probable match for W NIKE AIR ZOOM BELLA 7 (item 22). SKU FZ1689-004 matched across 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) with adjusted quantities: sizes 8 (LR9SW/GUJBJ) = 5 units and size 9 (JXIEZ/C4HHL) = 4 units, remaining sizes = 3 units each. Total GRN quantity 24 matches invoice exactly. Line total 24 × ₹220.86 = ₹5,300.64 matches invoice."
     },
     {
       "id": 23,

@@ -83,8 +83,8 @@ async def upload_invoice(
     current_user: CurrentUser,
     file: UploadFile = File(...),
 ):
-    if current_user.role not in ("admin", "editor"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+    # All authenticated roles can process items per PRD §3.2
+    pass  # no role restriction needed
 
     db = get_db()
     now = datetime.now(timezone.utc)

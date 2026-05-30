@@ -41,19 +41,19 @@
           "invoice": [
             {
               "document_id": "1001312123",
-              "value": "NEOFLO CAPABILITY TEST"
+              "value": "NEOFLO PTE LTD"
             }
           ],
           "po": [
             {
               "document_id": "PO-00058",
-              "value": "Neoflo capability test"
+              "value": "NEOFLO PTE LTD"
             }
           ],
           "grn": [
             {
               "document_id": "PR-00056",
-              "value": "Neoflo capability test"
+              "value": "NEOFLO PTE LTD"
             }
           ]
         },

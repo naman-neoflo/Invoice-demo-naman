@@ -90,8 +90,8 @@
         "similarity_score": 0,
         "values": {
           "invoice": null,
-          "po": "Neoflo capability test",
-          "grn": "Neoflo capability test"
+          "po": "NEOFLO PTE LTD",
+          "grn": "NEOFLO PTE LTD"
         },
         "matching_strategy": "exact",
         "tolerance_percentage": 0,

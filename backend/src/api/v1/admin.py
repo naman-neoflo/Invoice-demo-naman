@@ -13,7 +13,7 @@ from ...db.collections import tenants, users
 router = APIRouter(tags=["admin"])
 
 
-from ._common import _envelope, _oid, _require_admin
+from ._common import _envelope, _oid, _require_admin, _require_tenant_admin
 
 
 def _hash(plain: str) -> str:
@@ -27,7 +27,7 @@ def _ser_user(doc: dict, tenant_name: str | None = None) -> dict:
         "id": str(doc["_id"]),
         "email": doc.get("email", ""),
         "full_name": doc.get("full_name", ""),
-        "role": doc.get("role", "viewer"),
+        "role": doc.get("role", "member"),
         "is_active": doc.get("is_active", True),
         "tenant_id": str(tid) if tid else None,
         "tenant_name": tenant_name,
@@ -53,7 +53,7 @@ async def _enrich_users(db, docs: list) -> list:
 
 @router.get("/admin/users")
 async def list_users(current_user: CurrentUser):
-    _require_admin(current_user)
+    _require_tenant_admin(current_user)
     db = get_db()
     cursor = users(db).find({}).sort("created_at", 1)
     docs = await cursor.to_list(length=200)
@@ -74,8 +74,8 @@ class InviteRequest(BaseModel):
     @field_validator("role")
     @classmethod
     def valid_role(cls, v: str) -> str:
-        if v not in ("admin", "editor", "viewer"):
-            raise ValueError("role must be admin, editor, or viewer")
+        if v not in ("tenant_admin", "workspace_admin", "reviewer", "member"):
+            raise ValueError("role must be tenant_admin, workspace_admin, reviewer, or member")
         return v
 
     @field_validator("password")
@@ -88,14 +88,14 @@ class InviteRequest(BaseModel):
 
 @router.post("/admin/users")
 async def invite_user(body: InviteRequest, current_user: CurrentUser):
-    _require_admin(current_user)
+    _require_tenant_admin(current_user)
     db = get_db()
 
     if await users(db).find_one({"email": body.email}):
         raise HTTPException(status_code=409, detail="Email already registered")
 
     # Admin users must always be associated to a tenant
-    if body.role == "admin" and not body.tenant_id:
+    if body.role == "tenant_admin" and not body.tenant_id:
         raise HTTPException(status_code=422, detail="tenant_id is required when creating an admin user")
 
     tenant_oid = None
@@ -143,14 +143,14 @@ class UpdateUserRequest(BaseModel):
     @field_validator("role")
     @classmethod
     def valid_role(cls, v: str | None) -> str | None:
-        if v is not None and v not in ("admin", "editor", "viewer"):
-            raise ValueError("role must be admin, editor, or viewer")
+        if v is not None and v not in ("tenant_admin", "workspace_admin", "reviewer", "member"):
+            raise ValueError("role must be tenant_admin, workspace_admin, reviewer, or member")
         return v
 
 
 @router.patch("/admin/users/{user_id}")
 async def update_user(user_id: str, body: UpdateUserRequest, current_user: CurrentUser):
-    _require_admin(current_user)
+    _require_tenant_admin(current_user)
     db = get_db()
     uid = _oid(user_id, "user ID")
 
@@ -192,7 +192,7 @@ async def update_user(user_id: str, body: UpdateUserRequest, current_user: Curre
 
 @router.delete("/admin/users/{user_id}")
 async def delete_user(user_id: str, current_user: CurrentUser):
-    _require_admin(current_user)
+    _require_tenant_admin(current_user)
     db = get_db()
     uid = _oid(user_id, "user ID")
 
@@ -216,15 +216,15 @@ class AssignTenantRequest(BaseModel):
     @field_validator("role")
     @classmethod
     def valid_role(cls, v: str) -> str:
-        if v not in ("editor", "viewer"):
-            raise ValueError("role must be editor or viewer")
+        if v not in ("workspace_admin", "reviewer", "member"):
+            raise ValueError("role must be workspace_admin, reviewer, or member")
         return v
 
 
 @router.post("/admin/users/{user_id}/assign")
 async def assign_tenant(user_id: str, body: AssignTenantRequest, current_user: CurrentUser):
-    """Assign a tenant and role (viewer|editor) to a pending user."""
-    _require_admin(current_user)
+    """Assign a tenant and role (workspace_admin|reviewer|member) to a pending user."""
+    _require_tenant_admin(current_user)
     db = get_db()
     uid = _oid(user_id, "user ID")
 

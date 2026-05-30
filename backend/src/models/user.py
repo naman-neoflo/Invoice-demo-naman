@@ -3,7 +3,7 @@ from typing import Literal, Any
 from pydantic import BaseModel, EmailStr, field_validator
 
 
-Role = Literal["admin", "editor", "viewer"]
+Role = Literal["tenant_admin", "workspace_admin", "reviewer", "member"]
 
 
 class UserInDB(BaseModel):

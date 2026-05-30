@@ -236,4 +236,4 @@ function TenantsPage() {
   );
 }
 
-export default withAuthGuard(TenantsPage, { allowedRoles: ["admin"] });
+export default withAuthGuard(TenantsPage, { allowedRoles: ["tenant_admin"] });

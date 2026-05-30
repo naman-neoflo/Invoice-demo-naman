@@ -50,17 +50,41 @@ def _distribute_qty(inv_qty: float, n: int) -> list:
     return result
 
 
-def _build_per_item_matching(line_items: list, fixture_results: list, doc_date: str) -> list:
+def _build_per_item_matching(
+    line_items: list,
+    fixture_results: list,
+    doc_date: str,
+    po_data: dict | None = None,
+    grn_data: list | None = None,
+) -> list:
     """Build per-invoice-line-item matching data with GRN candidates.
 
-    Each invoice line item gets its own list of GRN candidates derived from
-    the fixture result for that line (matched by position, since all
-    invoice_line_ids in the fixture are "PLACEHOLDER_ID").
+    When po_data/grn_data are provided, GRN candidates use the actual per-size
+    PO descriptions, received quantities, and unit prices from those files.
+    Falls back to fixture-based qty distribution when no PO/GRN data is found.
 
-    Perfect  → one GRN row per po/grn ref, invoice qty distributed evenly.
-    Probable → one GRN row per probable_candidate ref, available_qty distributed.
+    Perfect  → actual PO/GRN rows (or evenly-distributed fallback).
+    Probable → actual PO/GRN rows with is_ai_suggested=True (or fallback).
     No match → empty GRN candidates list.
     """
+    # Build PO/GRN lookups: item_code → [po_item, ...] and item_id → grn_entry
+    code_to_po_items: dict[str, list] = {}
+    grn_map: dict[str, dict] = {}
+    fixture_po_number: str | None = None
+
+    if po_data:
+        fixture_po_number = po_data.get("po_number")
+        for po_item in po_data.get("items", []):
+            desc = po_item.get("description", "")
+            if " - " in desc:
+                code = desc.split(" - ")[0].strip()
+                code_to_po_items.setdefault(code, []).append(po_item)
+    if grn_data:
+        for entry in grn_data:
+            iid = entry.get("item_id")
+            if iid:
+                grn_map[iid] = entry
+
     per_item = []
     for idx, li in enumerate(line_items):
         inv_qty = float(li.get("quantity") or 0)
@@ -78,76 +102,134 @@ def _build_per_item_matching(line_items: list, fixture_results: list, doc_date: 
         grn_candidates = []
 
         if result and fixture_status == "perfect":
-            rdata = result.get("result_data") or {}
-            matched_ids = rdata.get("matched_row_ids") or []
-            po_refs = rdata.get("po") or []
-            grn_refs = rdata.get("grn") or []
-            # Use po/grn count; fall back to matched_row_ids count; default 1
-            n = len(po_refs) or len(grn_refs) or len(matched_ids) or 1
-
-            qtys = _distribute_qty(inv_qty, n)
-            for j in range(n):
-                q = qtys[j] if j < len(qtys) else 0
-                total = round(q * unit_price, 2)
-                grn_candidates.append({
-                    "id": f"{li_id}-grn-{j + 1}",
-                    "po_number": po_refs[j] if j < len(po_refs) else None,
-                    "grn_number": grn_refs[j] if j < len(grn_refs) else f"GRN-{matched_ids[j] if j < len(matched_ids) else idx + 1}",
-                    "document_date": doc_date,
-                    "description": description,
-                    "quantity": q,
-                    "unit_price": unit_price,
-                    "line_total": total,
-                    "is_matched": True,
-                    "is_ai_suggested": False,
-                    "qty_diff": 0,
-                    "total_diff": 0,
-                })
-
-        elif result and fixture_status == "probable":
-            rdata = result.get("result_data") or {}
-            # Support both probable_candidates structure and flat po/grn arrays
-            prob_candidates = rdata.get("probable_candidates") or []
-            if prob_candidates:
-                best = prob_candidates[0]
-                po_refs = best.get("po") or []
-                grn_refs = best.get("grn") or []
-                available_qty = best.get("available_qty")
+            matching_po_items = code_to_po_items.get(item_code, [])
+            if matching_po_items:
+                # Use actual per-size PO/GRN data
+                for j, po_item in enumerate(matching_po_items):
+                    iid = po_item.get("item_id")
+                    grn_entry = grn_map.get(iid) if iid else None
+                    g_qty = float(grn_entry["received_quantity"]) if grn_entry else float(po_item.get("quantity", 0))
+                    po_price = float(po_item.get("unit_price", unit_price))
+                    g_total = round(g_qty * po_price, 2)
+                    grn_candidates.append({
+                        "id": f"{li_id}-grn-{j + 1}",
+                        "po_number": fixture_po_number,
+                        "grn_number": grn_entry["grn_id"] if grn_entry else f"GRN-{idx + 1}-{j + 1}",
+                        "document_date": doc_date,
+                        "description": po_item.get("description", description),
+                        "quantity": g_qty,
+                        "unit_price": po_price,
+                        "line_total": g_total,
+                        "is_matched": True,
+                        "is_ai_suggested": False,
+                        "qty_diff": 0,
+                        "total_diff": 0,
+                    })
             else:
+                # Fallback: distribute invoice qty evenly across fixture po/grn refs
+                rdata = result.get("result_data") or {}
+                matched_ids = rdata.get("matched_row_ids") or []
                 po_refs = rdata.get("po") or []
                 grn_refs = rdata.get("grn") or []
-                available_qty = None
+                n = len(po_refs) or len(grn_refs) or len(matched_ids) or 1
+                qtys = _distribute_qty(inv_qty, n)
+                for j in range(n):
+                    q = qtys[j] if j < len(qtys) else 0
+                    total = round(q * unit_price, 2)
+                    grn_candidates.append({
+                        "id": f"{li_id}-grn-{j + 1}",
+                        "po_number": po_refs[j] if j < len(po_refs) else None,
+                        "grn_number": grn_refs[j] if j < len(grn_refs) else f"GRN-{matched_ids[j] if j < len(matched_ids) else idx + 1}",
+                        "document_date": doc_date,
+                        "description": description,
+                        "quantity": q,
+                        "unit_price": unit_price,
+                        "line_total": total,
+                        "is_matched": True,
+                        "is_ai_suggested": False,
+                        "qty_diff": 0,
+                        "total_diff": 0,
+                    })
 
-            n = len(po_refs) if po_refs else len(grn_refs) if grn_refs else 1
-            # Use available_qty if provided; otherwise 80% of invoice qty (integer-safe)
-            if available_qty is not None:
-                grn_total_qty = float(available_qty)
+        elif result and fixture_status == "probable":
+            matching_po_items = code_to_po_items.get(item_code, [])
+            if matching_po_items:
+                # Use actual per-size PO/GRN data with probable flagging
+                for j, po_item in enumerate(matching_po_items):
+                    iid = po_item.get("item_id")
+                    grn_entry = grn_map.get(iid) if iid else None
+                    g_qty = float(grn_entry["received_quantity"]) if grn_entry else float(po_item.get("quantity", 0))
+                    po_qty = float(po_item.get("quantity", 0))
+                    po_price = float(po_item.get("unit_price", unit_price))
+                    g_total = round(g_qty * po_price, 2)
+                    po_total = round(po_qty * po_price, 2)
+                    grn_candidates.append({
+                        "id": f"{li_id}-grn-{j + 1}",
+                        "po_number": fixture_po_number,
+                        "grn_number": grn_entry["grn_id"] if grn_entry else f"GRN-{idx + 1}-{j + 1}",
+                        "document_date": doc_date,
+                        "description": po_item.get("description", description),
+                        "quantity": g_qty,
+                        "unit_price": po_price,
+                        "line_total": g_total,
+                        "is_matched": True,
+                        "is_ai_suggested": True,
+                        "qty_diff": round(g_qty - po_qty, 4),
+                        "total_diff": round(g_total - po_total, 2),
+                    })
             else:
-                raw = inv_qty * 0.8
-                grn_total_qty = float(int(raw) if raw == int(raw) else round(raw, 4))
+                # Fallback: distribute using fixture refs and available_qty
+                rdata = result.get("result_data") or {}
+                prob_candidates = rdata.get("probable_candidates") or []
+                if prob_candidates:
+                    best = prob_candidates[0]
+                    po_refs = best.get("po") or []
+                    grn_refs = best.get("grn") or []
+                    available_qty = best.get("available_qty")
+                    grn_unit_price = float(best.get("unit_price") or unit_price)
+                    per_row_quantities = best.get("quantities")
+                else:
+                    po_refs = rdata.get("po") or []
+                    grn_refs = rdata.get("grn") or []
+                    available_qty = None
+                    grn_unit_price = unit_price
+                    per_row_quantities = None
 
-            grn_qtys = _distribute_qty(grn_total_qty, n)
-            inv_qtys = _distribute_qty(inv_qty, n)
+                n = len(po_refs) if po_refs else len(grn_refs) if grn_refs else 1
 
-            for j in range(n):
-                g_qty = grn_qtys[j] if j < len(grn_qtys) else 0
-                i_qty = inv_qtys[j] if j < len(inv_qtys) else 0
-                g_total = round(g_qty * unit_price, 2)
-                i_total_row = round(i_qty * unit_price, 2)
-                grn_candidates.append({
-                    "id": f"{li_id}-grn-{j + 1}",
-                    "po_number": po_refs[j] if j < len(po_refs) else None,
-                    "grn_number": grn_refs[j] if j < len(grn_refs) else f"GRN-{idx + 1}-{j + 1}",
-                    "document_date": doc_date,
-                    "description": description,
-                    "quantity": g_qty,
-                    "unit_price": unit_price,
-                    "line_total": g_total,
-                    "is_matched": True,
-                    "is_ai_suggested": True,
-                    "qty_diff": round(g_qty - i_qty, 4),
-                    "total_diff": round(g_total - i_total_row, 2),
-                })
+                if per_row_quantities and len(per_row_quantities) >= n:
+                    grn_qtys = [float(q) for q in per_row_quantities[:n]]
+                    grn_total_qty = sum(grn_qtys)
+                    inv_qtys = grn_qtys if abs(grn_total_qty - inv_qty) < 0.01 else _distribute_qty(inv_qty, n)
+                elif available_qty is not None:
+                    grn_total_qty = float(available_qty)
+                    grn_qtys = _distribute_qty(grn_total_qty, n)
+                    inv_qtys = _distribute_qty(inv_qty, n)
+                else:
+                    raw = inv_qty * 0.8
+                    grn_total_qty = float(int(raw) if raw == int(raw) else round(raw, 4))
+                    grn_qtys = _distribute_qty(grn_total_qty, n)
+                    inv_qtys = _distribute_qty(inv_qty, n)
+
+                for j in range(n):
+                    g_qty = grn_qtys[j] if j < len(grn_qtys) else 0
+                    i_qty = inv_qtys[j] if j < len(inv_qtys) else 0
+                    g_total = round(g_qty * grn_unit_price, 2)
+                    i_total_row = round(i_qty * grn_unit_price, 2)
+                    grn_candidates.append({
+                        "id": f"{li_id}-grn-{j + 1}",
+                        "po_number": po_refs[j] if j < len(po_refs) else None,
+                        "grn_number": grn_refs[j] if j < len(grn_refs) else f"GRN-{idx + 1}-{j + 1}",
+                        "document_date": doc_date,
+                        "description": description,
+                        "quantity": g_qty,
+                        "unit_price": grn_unit_price,
+                        "line_total": g_total,
+                        "is_matched": True,
+                        "is_ai_suggested": True,
+                        "qty_diff": round(g_qty - i_qty, 4),
+                        "total_diff": round(g_total - i_total_row, 2),
+                    })
         # no_match → grn_candidates stays []
 
         per_item.append({
@@ -164,7 +246,7 @@ def _build_per_item_matching(line_items: list, fixture_results: list, doc_date: 
     return per_item
 
 
-def _build_matching(invoice_schema: dict, currency: str | None, li_fixture: dict) -> dict:
+def _build_matching(invoice_schema: dict, currency: str | None, li_fixture: dict, po_data: dict | None = None, grn_data: list | None = None) -> dict:
     """Build the full matching payload.
 
     Returns both:
@@ -189,7 +271,7 @@ def _build_matching(invoice_schema: dict, currency: str | None, li_fixture: dict
     doc_date = str(metadata.get("document_date") or metadata.get("invoice_date") or "")
 
     # ── Per-item matching (new UI) ─────────────────────────────────────────────
-    per_item_matching = _build_per_item_matching(line_items, fixture_results, doc_date)
+    per_item_matching = _build_per_item_matching(line_items, fixture_results, doc_date, po_data, grn_data)
 
     # ── Legacy collapsed structure (variance bar / stage gating) ──────────────
     po_number = (li_fixture.get("po_numbers") or [None])[0]
@@ -297,7 +379,11 @@ async def get_line_item_matching(invoice_id: str, current_user: CurrentUser):
     meta_fixture = _unwrap_fixture(bundle.metadata_validation if bundle else {})
 
     currency = _extract_field(invoice_schema, "currency")
-    matching = _build_matching(invoice_schema, currency, li_fixture)
+    matching = _build_matching(
+        invoice_schema, currency, li_fixture,
+        po_data=bundle.po_data if bundle else None,
+        grn_data=bundle.grn_data if bundle else None,
+    )
 
     meta_summary = meta_fixture.get("summary", {})
 

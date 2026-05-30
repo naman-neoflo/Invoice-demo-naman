@@ -622,11 +622,14 @@
                 "5WGA0",
                 "C4HHL"
               ],
-              "confidence": 0.82
+              "quantities": [3, 3, 3, 3, 5, 3, 4],
+              "unit_price": 220.86,
+              "available_qty": 24,
+              "confidence": 0.95
             }
           ]
         },
-        "ai_reasoning": "Probable match for W NIKE AIR ZOOM BELLA 7 (item 22). SKU FZ1689-004 correctly identified with excellent price match ($220.88 PO vs $220.86 invoice, 0.009% variance). However, only 20 units available in merged data across 7 size variants vs. invoice requirement of 24 units (4-unit shortfall). All available GRN quantities match PO quantities. Rank 1 candidate with 0.82 confidence due to correct SKU/price but insufficient quantity.",
+        "ai_reasoning": "Probable match for W NIKE AIR ZOOM BELLA 7 (item 22). SKU FZ1689-004 matched across 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) with adjusted quantities: sizes 8 (LR9SW/GUJBJ) = 5 units and size 9 (JXIEZ/C4HHL) = 4 units, remaining sizes = 3 units each. Total GRN quantity 24 matches invoice exactly. Line total 24 × $220.86 = $5,300.64 matches invoice.",
         "created_at": {
           "$date": "2026-03-10T17:52:10.000Z"
         }
@@ -1104,8 +1107,8 @@
         "similarity_score": 0,
         "values": {
           "invoice": null,
-          "po": "Neoflo capability test",
-          "grn": "Neoflo capability test"
+          "po": "NEOFLO PTE LTD",
+          "grn": "NEOFLO PTE LTD"
         },
         "matching_strategy": "exact",
         "tolerance_percentage": 0,

@@ -41,7 +41,7 @@ _STP_ACTOR = UserOut(
     id="000000000000000000000001",
     email="stp@neoflo.ai",
     full_name="STP System",
-    role="admin",
+    role="tenant_admin",
     is_active=True,
     tenant_id=None,
     created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
@@ -331,8 +331,8 @@ class StpRequest(BaseModel):
 
 @router.patch("/settings/stp")
 async def update_stp_setting(body: StpRequest, current_user: CurrentUser):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin only")
+    if current_user.role not in ("tenant_admin", "workspace_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
     db = get_db()
     await set_global_stp(db, body.enabled)
     return _envelope(data={"stp_enabled": body.enabled})
@@ -351,8 +351,8 @@ class AckThresholdRequest(BaseModel):
 
 @router.patch("/settings/ack-threshold")
 async def update_ack_threshold_setting(body: AckThresholdRequest, current_user: CurrentUser):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin only")
+    if current_user.role not in ("tenant_admin", "workspace_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
     if body.value < 1:
         raise HTTPException(status_code=422, detail="ACK threshold must be at least 1")
     db = get_db()

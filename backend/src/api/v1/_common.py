@@ -26,13 +26,35 @@ def _oid(value: str, entity: str = "invoice ID") -> ObjectId:
 
 
 def _require_editor(current_user):
-    if current_user.role not in ("admin", "editor"):
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
+    # All roles can process items per PRD §3.2
+    pass  # no restriction — kept for backward compat
 
 
 def _require_admin(current_user):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin only")
+    # Alias for _require_manager — tenant_admin or workspace_admin
+    if current_user.role not in _MANAGER_ROLES:
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+
+# PRD role sets
+_MANAGER_ROLES = {"tenant_admin", "workspace_admin"}  # can see People, Audit Log, configure workspace
+
+
+def _require_tenant_admin(current_user):
+    """tenant_admin only — invite users, remove users from tenant."""
+    if current_user.role != "tenant_admin":
+        raise HTTPException(status_code=403, detail="Tenant admin only")
+
+
+def _require_manager(current_user):
+    """tenant_admin or workspace_admin — people screen, audit log, workflow config."""
+    if current_user.role not in _MANAGER_ROLES:
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+
+def _require_can_process(current_user):
+    """All authenticated roles can process items."""
+    pass  # any authenticated user is allowed
 
 
 def _unwrap_fixture(data) -> dict:

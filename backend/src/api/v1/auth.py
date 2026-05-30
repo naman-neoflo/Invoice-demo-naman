@@ -20,6 +20,9 @@ from pydantic import BaseModel
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+_MANAGER_ROLES = {"tenant_admin", "workspace_admin"}
+_ALL_PAGES = ["dashboard", "reporting", "arForecast", "cashApplication"]
+
 
 def _hash_password(plain: str) -> str:
     return bcrypt.hashpw(plain.encode(), bcrypt.gensalt()).decode()
@@ -32,14 +35,47 @@ def _verify_password(plain: str, hashed: str) -> bool:
 from ._common import _envelope
 
 
-async def _enrich_tenant(db, user_out: UserOut) -> UserOut:
-    """Attach tenant_name to UserOut if the user belongs to a tenant."""
-    if not user_out.tenant_id:
-        return user_out
-    t = await tenants(db).find_one({"_id": ObjectId(user_out.tenant_id)})
-    if t:
-        return user_out.model_copy(update={"tenant_name": t.get("name")})
+async def _enrich_user(db, user_out: UserOut, active_tenant_id: str | None = None) -> UserOut:
+    """
+    Attach tenant_name and effective page_access to a UserOut.
+
+    page_access resolution order:
+      1. Per-user override (user_out.page_access non-empty)  → use as-is
+      2. Tenant role_permissions[role]                       → use that list
+      3. Fallback                                            → all pages
+    Managers (tenant_admin / workspace_admin) always get all pages returned.
+    """
+    updates: dict = {}
+
+    eff_tid = active_tenant_id or user_out.tenant_id
+    tenant_doc = None
+    if eff_tid:
+        try:
+            tenant_doc = await tenants(db).find_one({"_id": ObjectId(eff_tid)})
+        except Exception:
+            pass
+
+    if tenant_doc:
+        updates["tenant_name"] = tenant_doc.get("name")
+
+    # Effective page_access
+    if user_out.role in _MANAGER_ROLES:
+        # Managers see everything — return full list so the frontend can use it
+        updates["page_access"] = list(_ALL_PAGES)
+    elif not user_out.page_access:
+        # Non-manager with no per-user override → use tenant role_permissions
+        role_perms = (tenant_doc or {}).get("role_permissions", {})
+        updates["page_access"] = role_perms.get(user_out.role, list(_ALL_PAGES))
+    # else: per-user page_access is already set — leave it alone
+
+    if updates:
+        return user_out.model_copy(update=updates)
     return user_out
+
+
+async def _enrich_tenant(db, user_out: UserOut) -> UserOut:
+    """Legacy shim — delegates to _enrich_user."""
+    return await _enrich_user(db, user_out)
 
 
 # ── Signup ────────────────────────────────────────────────────────────────────
@@ -56,7 +92,7 @@ async def signup(body: SignupRequest):
         "email": body.email,
         "password_hash": _hash_password(body.password),
         "full_name": body.full_name,
-        "role": "viewer",   # all self-signed accounts start as viewer, no tenant
+        "role": "member",   # all self-signed accounts start as member, no tenant
         "is_active": True,
         "tenant_id": None,
         "created_at": now,
@@ -85,7 +121,7 @@ async def login(body: LoginRequest):
     await users(db).update_one({"_id": doc["_id"]}, {"$set": {"last_login_at": now}})
     doc["last_login_at"] = now
 
-    user_out = await _enrich_tenant(db, user_doc_to_out(doc))
+    user_out = await _enrich_user(db, user_doc_to_out(doc))
     token = create_access_token(str(doc["_id"]), doc["role"])
 
     return _envelope(data={"access_token": token, "token_type": "bearer", "user": user_out.model_dump()})
@@ -138,8 +174,8 @@ async def logout(current_user: CurrentUser, request: Request):
 @router.get("/me")
 async def me(current_user: CurrentUser):
     db = get_db()
-    enriched = await _enrich_tenant(db, current_user)
-    # Also enrich active_tenant_name if switching
+    enriched = await _enrich_user(db, current_user)
+    # Also enrich active_tenant_name if switching tenants
     if current_user.active_tenant_id:
         t = await tenants(db).find_one({"_id": ObjectId(current_user.active_tenant_id)})
         if t:
@@ -155,7 +191,7 @@ class SwitchTenantRequest(BaseModel):
 
 @router.post("/switch-tenant")
 async def switch_tenant(body: SwitchTenantRequest, current_user: CurrentUser):
-    if current_user.role != "admin":
+    if current_user.role not in ("tenant_admin", "workspace_admin"):
         raise HTTPException(status_code=403, detail="Only admins can switch tenants")
 
     db = get_db()

@@ -43,6 +43,8 @@ class FixtureBundle:
     line_item: dict = field(default_factory=dict)
     bill_posting: dict = field(default_factory=dict)
     erp_result: dict = field(default_factory=dict)
+    po_data: dict = field(default_factory=dict)
+    grn_data: list = field(default_factory=list)
 
     def get_stage(self, stage: str) -> dict:
         """Return fixture data for a given stage slug."""
@@ -82,10 +84,9 @@ class FixtureLoader:
         self._bundles: dict[str, FixtureBundle] | None = None
 
     def discover(self) -> dict[str, FixtureBundle]:
-        """Scan root dir; return {scenario_key: FixtureBundle}."""
-        if self._bundles is not None:
-            return self._bundles
-
+        """Scan root dir; return {scenario_key: FixtureBundle}.
+        Files are re-read from disk on every call so fixture edits take
+        effect immediately without restarting the backend."""
         bundles: dict[str, FixtureBundle] = {}
 
         for entry in sorted(self._root.iterdir()):
@@ -103,6 +104,16 @@ class FixtureLoader:
                 fpath = entry / filename
                 if fpath.exists():
                     setattr(bundle, attr, _load_json(fpath))
+
+            # Load optional PO and GRN sidecar files
+            for f in sorted(entry.iterdir()):
+                if f.suffix != ".json" or f.name in STAGE_FILES.values():
+                    continue
+                if f.name.endswith("_PO.json"):
+                    bundle.po_data = _load_json(f)
+                elif f.name.endswith("_grn.json"):
+                    raw = _load_json(f)
+                    bundle.grn_data = raw if isinstance(raw, list) else []
 
             bundles[key] = bundle
 
@@ -174,7 +185,8 @@ class FixtureLoader:
         }
 
 
-# Module-level singleton — imported by backend services
+# Single shared instance — discover() re-reads files each call so fixture
+# edits are picked up live without restarting the backend.
 _loader_instance: FixtureLoader | None = None
 
 

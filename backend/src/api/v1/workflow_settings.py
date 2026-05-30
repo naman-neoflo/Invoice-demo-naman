@@ -234,8 +234,8 @@ class WorkflowSettingsPayload(BaseModel):
 
 @router.put("/settings/workflow")
 async def update_workflow(body: WorkflowSettingsPayload, current_user: CurrentUser):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin only")
+    if current_user.role not in ("tenant_admin", "workspace_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
 
     db = get_db()
     from datetime import datetime, timezone

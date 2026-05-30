@@ -31,6 +31,7 @@ from .api.v1 import zoho as zoho_router
 from .api.v1 import stp as stp_router
 from .api.v1 import workflow_settings as workflow_settings_router
 from .api.v1 import pipeline_nav as pipeline_nav_router
+from .api.v1 import settings as settings_router
 from .cash.router import router as cash_router, startup as cash_startup
 
 
@@ -40,6 +41,8 @@ async def lifespan(app: FastAPI):
     await connect_db()
     db = get_db()
     await ensure_indexes(db)
+    from .api.v1.settings import ensure_settings_indexes
+    await ensure_settings_indexes(db)
     await seed_pipeline(db)
 
     # Start Gmail poller if configured
@@ -98,6 +101,7 @@ app.include_router(zoho_router.router, prefix="/api/v1")
 app.include_router(stp_router.router, prefix="/api/v1")
 app.include_router(workflow_settings_router.router, prefix="/api/v1")
 app.include_router(pipeline_nav_router.router, prefix="/api/v1")
+app.include_router(settings_router.router, prefix="/api/v1")
 app.include_router(cash_router, prefix="/cash-api")
 
 

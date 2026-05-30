@@ -19,7 +19,7 @@ interface UserRecord {
   id: string;
   email: string;
   full_name: string;
-  role: "admin" | "editor" | "viewer";
+  role: "tenant_admin" | "workspace_admin" | "reviewer" | "member";
   is_active: boolean;
   tenant_id: string | null;
   tenant_name: string | null;
@@ -30,9 +30,10 @@ interface UserRecord {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
-  admin:  { bg: "rgba(96,165,250,0.12)",  color: "#60a5fa",  border: "rgba(96,165,250,0.25)" },
-  editor: { bg: "rgba(251,191,36,0.1)",   color: "#fbbf24",  border: "rgba(251,191,36,0.2)" },
-  viewer: { bg: "rgba(255,255,255,0.06)", color: "#94a3b8",  border: "rgba(255,255,255,0.1)" },
+  tenant_admin:    { bg: "rgba(96,165,250,0.12)",  color: "#60a5fa",  border: "rgba(96,165,250,0.25)" },
+  workspace_admin: { bg: "rgba(52,211,153,0.1)",   color: "#34d399",  border: "rgba(52,211,153,0.2)" },
+  reviewer:        { bg: "rgba(251,191,36,0.1)",   color: "#fbbf24",  border: "rgba(251,191,36,0.2)" },
+  member:          { bg: "rgba(255,255,255,0.06)", color: "#94a3b8",  border: "rgba(255,255,255,0.1)" },
 };
 
 function userInitials(name: string): string {
@@ -72,12 +73,12 @@ interface InviteModalProps {
 
 function InviteModal({ open, tenants, onClose, onInvited }: InviteModalProps) {
   const { toast } = useToast();
-  const [form, setForm] = useState({ full_name: "", email: "", role: "viewer", password: "", tenant_id: "" });
+  const [form, setForm] = useState({ full_name: "", email: "", role: "member", password: "", tenant_id: "" });
   const [loading, setLoading] = useState(false);
 
   if (!open) return null;
 
-  const isAdmin = form.role === "admin";
+  const isAdmin = form.role === "tenant_admin";
 
   const handleSubmit = async () => {
     if (!form.full_name || !form.email || !form.password) {
@@ -101,7 +102,7 @@ function InviteModal({ open, tenants, onClose, onInvited }: InviteModalProps) {
       toast(`${form.full_name} invited successfully`, "success");
       onInvited(result);
       onClose();
-      setForm({ full_name: "", email: "", role: "viewer", password: "", tenant_id: "" });
+      setForm({ full_name: "", email: "", role: "member", password: "", tenant_id: "" });
     } catch (err) {
       toast(err instanceof ApiError ? err.message : "Invite failed", "error");
     } finally {
@@ -148,9 +149,10 @@ function InviteModal({ open, tenants, onClose, onInvited }: InviteModalProps) {
               value={form.role}
               onChange={e => setForm(prev => ({ ...prev, role: e.target.value }))}
             >
-              <option value="viewer">Viewer — read-only</option>
-              <option value="editor">Editor — process invoices</option>
-              <option value="admin">Admin — full access</option>
+              <option value="member">Member — process invoices</option>
+              <option value="reviewer">Reviewer — process invoices</option>
+              <option value="workspace_admin">Workspace Admin — configure workspace</option>
+              <option value="tenant_admin">Tenant Admin — full tenant access</option>
             </select>
           </div>
 
@@ -211,7 +213,7 @@ interface AssignModalProps {
 function AssignModal({ user: target, tenants, onClose, onAssigned }: AssignModalProps) {
   const { toast } = useToast();
   const [tenantId, setTenantId] = useState("");
-  const [role, setRole] = useState<"viewer" | "editor">("viewer");
+  const [role, setRole] = useState<"workspace_admin" | "reviewer" | "member">("member");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -258,9 +260,10 @@ function AssignModal({ user: target, tenants, onClose, onAssigned }: AssignModal
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium" style={{ color: "#94a3b8" }}>Role</label>
-            <select className="w-full px-3 py-2.5 text-sm" style={SELECT_STYLE} value={role} onChange={e => setRole(e.target.value as "viewer" | "editor")}>
-              <option value="viewer">Viewer — read-only</option>
-              <option value="editor">Editor — process invoices</option>
+            <select className="w-full px-3 py-2.5 text-sm" style={SELECT_STYLE} value={role} onChange={e => setRole(e.target.value as "workspace_admin" | "reviewer" | "member")}>
+              <option value="member">Member — process invoices</option>
+              <option value="reviewer">Reviewer — process invoices</option>
+              <option value="workspace_admin">Workspace Admin — configure workspace</option>
             </select>
           </div>
         </div>
@@ -525,9 +528,10 @@ function UsersPage() {
                             opacity: isPending ? 0.5 : 1,
                           }}
                         >
-                          <option value="viewer">Viewer</option>
-                          <option value="editor">Editor</option>
-                          <option value="admin">Admin</option>
+                          <option value="member">Member</option>
+                          <option value="reviewer">Reviewer</option>
+                          <option value="workspace_admin">Workspace Admin</option>
+                          <option value="tenant_admin">Tenant Admin</option>
                         </select>
                       </td>
 
@@ -604,4 +608,4 @@ function UsersPage() {
   );
 }
 
-export default withAuthGuard(UsersPage, { allowedRoles: ["admin"] });
+export default withAuthGuard(UsersPage, { allowedRoles: ["tenant_admin"] });

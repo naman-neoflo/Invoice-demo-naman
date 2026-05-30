@@ -100,21 +100,31 @@ SEED_ADMIN = {
     "email": "admin@neoflo.ai",
     "full_name": "Neoflo Admin",
     "password": "Admin@123",   # plaintext — hashed at seed time
-    "role": "admin",
+    "role": "tenant_admin",
     "tenant_slug": "neoflo",
 }
 
 SEED_ACME_USERS = [
-    {"email": "emily.carter@acmecorp.com",      "full_name": "Emily Carter",      "role": "admin"},
-    {"email": "michael.johnson@acmecorp.com",   "full_name": "Michael Johnson",   "role": "admin"},
-    {"email": "jessica.martinez@acmecorp.com",  "full_name": "Jessica Martinez",  "role": "editor"},
-    {"email": "david.thompson@acmecorp.com",    "full_name": "David Thompson",    "role": "viewer"},
-    {"email": "ashley.robinson@acmecorp.com",   "full_name": "Ashley Robinson",   "role": "viewer"},
-    {"email": "christopher.davis@acmecorp.com", "full_name": "Christopher Davis", "role": "admin"},
-    {"email": "olivia.bennett@acmecorp.com",    "full_name": "Olivia Bennett",    "role": "viewer"},
+    {"email": "emily.carter@acmecorp.com",      "full_name": "Emily Carter",      "role": "tenant_admin"},
+    {"email": "michael.johnson@acmecorp.com",   "full_name": "Michael Johnson",   "role": "tenant_admin"},
+    {"email": "jessica.martinez@acmecorp.com",  "full_name": "Jessica Martinez",  "role": "workspace_admin"},
+    {"email": "david.thompson@acmecorp.com",    "full_name": "David Thompson",    "role": "member"},
+    {"email": "ashley.robinson@acmecorp.com",   "full_name": "Ashley Robinson",   "role": "member"},
+    {"email": "christopher.davis@acmecorp.com", "full_name": "Christopher Davis", "role": "tenant_admin"},
+    {"email": "olivia.bennett@acmecorp.com",    "full_name": "Olivia Bennett",    "role": "member"},
 ]
 
 ACME_PASSWORD = "Asdf@1234"
+
+# Extra demo users seeded in the Neoflo tenant so admin@neoflo.ai can test
+# role-based access without needing to switch tenants.
+SEED_NEOFLO_DEMO_USERS = [
+    {"email": "workspace@neoflo.ai", "full_name": "Alex Workspace",  "role": "workspace_admin"},
+    {"email": "reviewer@neoflo.ai",  "full_name": "Sam Reviewer",    "role": "reviewer"},
+    {"email": "member@neoflo.ai",    "full_name": "Jordan Member",   "role": "member"},
+]
+
+NEOFLO_DEMO_PASSWORD = "Admin@123"
 
 
 async def seed_tenants(db: AsyncIOMotorDatabase) -> None:
@@ -183,11 +193,47 @@ async def seed_acme_users(db: AsyncIOMotorDatabase) -> None:
         print(f"[seeder] {count} ACME Corp demo user(s) seeded.")
 
 
+async def seed_neoflo_demo_users(db: AsyncIOMotorDatabase) -> None:
+    """Seed reviewer/member demo accounts in the Neoflo tenant.
+
+    This lets admin@neoflo.ai configure role-permissions and immediately
+    verify the effect by logging in as reviewer@neoflo.ai or member@neoflo.ai
+    (password: Admin@123) — all within the same tenant.
+    """
+    tenant_doc = await tenants(db).find_one({"slug": "neoflo"})
+    if not tenant_doc:
+        return
+
+    now = datetime.now(timezone.utc)
+    pw_hash = bcrypt.hashpw(NEOFLO_DEMO_PASSWORD.encode(), bcrypt.gensalt()).decode()
+    count = 0
+    for u in SEED_NEOFLO_DEMO_USERS:
+        if await users(db).find_one({"email": u["email"]}):
+            continue
+        await users(db).insert_one({
+            "email": u["email"],
+            "full_name": u["full_name"],
+            "password_hash": pw_hash,
+            "role": u["role"],
+            "is_active": True,
+            "tenant_id": tenant_doc["_id"],
+            "page_access": [],   # empty → derived from role_permissions at login
+            "ar_sub_access": [],
+            "created_at": now,
+            "updated_at": now,
+            "last_login_at": None,
+        })
+        count += 1
+    if count:
+        print(f"[seeder] {count} Neoflo demo user(s) seeded (reviewer/member/workspace_admin).")
+
+
 async def seed_pipeline(db: AsyncIOMotorDatabase) -> None:
     """Idempotent — does nothing if pipeline already seeded."""
     await seed_tenants(db)
     await seed_admin_user(db)
     await seed_acme_users(db)
+    await seed_neoflo_demo_users(db)
 
     existing = await pipelines(db).find_one({"slug": PIPELINE_SLUG})
     if existing:
