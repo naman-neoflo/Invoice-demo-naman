@@ -793,7 +793,15 @@
               "5WGA0",
               "C4HHL"
             ],
-            "quantities": [3, 3, 3, 3, 5, 3, 4],
+            "quantities": [
+              3,
+              3,
+              3,
+              3,
+              5,
+              3,
+              4
+            ],
             "unit_price": 220.86,
             "available_qty": 24,
             "confidence": 0.95
@@ -804,7 +812,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:46:19.000Z",
-      "reasoning": "Probable match for W NIKE AIR ZOOM BELLA 7 (item 22). SKU FZ1689-004 matched across 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) with adjusted quantities: sizes 8 (LR9SW/GUJBJ) = 5 units and size 9 (JXIEZ/C4HHL) = 4 units, remaining sizes = 3 units each. Total GRN quantity 24 matches invoice exactly. Line total 24 × ₹220.86 = ₹5,300.64 matches invoice."
+      "reasoning": "SKU FZ1689-004 matched across 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) in PO-00058 / GRN PR-00056. All quantities align exactly: 2+4+4+4+4+3+3 = 24 units. However, the invoice unit price of ₹220.80 is ₹0.06 lower than the PO/GRN agreed rate of ₹220.86 across all 24 units — resulting in an invoice total of ₹5,299.20 against a PO/GRN total of ₹5,300.64, a shortfall of ₹1.44 (0.027%). SKU, quantities, and GRN receipt are all confirmed. The price variance likely reflects a negotiated rate adjustment not yet updated in the PO. Classified as high-confidence probable (0.82); recommend reviewer confirm whether the invoice rate of ₹220.80 supersedes the PO rate of ₹220.86 before approving."
     },
     {
       "id": 23,
@@ -829,7 +837,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:46:30.000Z",
-      "reasoning": "Perfect match found. Both size variants (6.5, 8.5) matched exactly with SKU IF1761-300. Total quantity 4 units matches invoice exactly. Both variants have identical unit price 269.46. Line total calculation: 4 \u00d7 269.46 = 1,077.84 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Perfect match found. Both size variants (6.5, 8.5) matched exactly with SKU IF1761-300. Total quantity 4 units matches invoice exactly. Both variants have identical unit price 269.46. Line total calculation: 4 × 269.46 = 1,077.84 verified. 100% match on SKU, price, and quantity."
     },
     {
       "id": 24,
@@ -866,7 +874,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:46:44.000Z",
-      "reasoning": "Perfect match found. All 6 size variants (6, 6.5, 7, 7.5, 8, 8.5) matched exactly with SKU IF1764-300. Total quantity 18 units matches invoice exactly. All variants have identical unit price 220.86. Line total calculation: 18 \u00d7 220.86 = 3,975.48 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Perfect match found. All 6 size variants (6, 6.5, 7, 7.5, 8, 8.5) matched exactly with SKU IF1764-300. Total quantity 18 units matches invoice exactly. All variants have identical unit price 220.86. Line total calculation: 18 × 220.86 = 3,975.48 verified. 100% match on SKU, price, and quantity."
     },
     {
       "id": 25,
@@ -903,7 +911,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:46:56.000Z",
-      "reasoning": "Perfect match found. All 6 size variants (6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU DV1238-400. Total quantity 20 units matches invoice exactly. All variants have identical unit price 264.06. Line total calculation: 20 \u00d7 264.06 = 5,281.2 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Perfect match found. All 6 size variants (6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU DV1238-400. Total quantity 20 units matches invoice exactly. All variants have identical unit price 264.06. Line total calculation: 20 × 264.06 = 5,281.2 verified. 100% match on SKU, price, and quantity."
     },
     {
       "id": 26,
@@ -943,7 +951,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:47:09.000Z",
-      "reasoning": "Perfect match found. All 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU DV3865-601. Total quantity 24 units matches invoice exactly. All variants have identical unit price 345.06. Line total calculation: 24 \u00d7 345.06 = 8,281.44 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Perfect match found. All 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU DV3865-601. Total quantity 24 units matches invoice exactly. All variants have identical unit price 345.06. Line total calculation: 24 × 345.06 = 8,281.44 verified. 100% match on SKU, price, and quantity."
     },
     {
       "id": 27,
@@ -986,7 +994,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:47:22.000Z",
-      "reasoning": "Perfect match found. All 8 size variants (5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU FD4328-002. Total quantity 23 units matches invoice exactly. All variants have identical unit price 345.06. Line total calculation: 23 \u00d7 345.06 = 7,936.38 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Perfect match found. All 8 size variants (5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU FD4328-002. Total quantity 23 units matches invoice exactly. All variants have identical unit price 345.06. Line total calculation: 23 × 345.06 = 7,936.38 verified. 100% match on SKU, price, and quantity."
     },
     {
       "id": 28,
@@ -1026,7 +1034,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:47:35.000Z",
-      "reasoning": "Perfect match found. All 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU FJ7126-402. Total quantity 23 units matches invoice exactly. All variants have identical unit price 301.86. Line total calculation: 23 \u00d7 301.86 = 6,942.78 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Perfect match found. All 7 size variants (6, 6.5, 7, 7.5, 8, 8.5, 9) matched exactly with SKU FJ7126-402. Total quantity 23 units matches invoice exactly. All variants have identical unit price 301.86. Line total calculation: 23 × 301.86 = 6,942.78 verified. 100% match on SKU, price, and quantity."
     },
     {
       "id": 29,
@@ -1072,7 +1080,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:47:48.000Z",
-      "reasoning": "Perfect match found. All 9 size variants (7, 8, 8.5, 9, 9.5, 10, 10.5, 11, 12) matched exactly with SKU HQ4502-101. Total quantity 19 units matches invoice exactly. All variants have identical unit price 210.06. Line total calculation: 19 \u00d7 210.06 = 3,991.14 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Perfect match found. All 9 size variants (7, 8, 8.5, 9, 9.5, 10, 10.5, 11, 12) matched exactly with SKU HQ4502-101. Total quantity 19 units matches invoice exactly. All variants have identical unit price 210.06. Line total calculation: 19 × 210.06 = 3,991.14 verified. 100% match on SKU, price, and quantity."
     },
     {
       "id": 30,
@@ -1103,7 +1111,7 @@
       "matched_by": "ai",
       "matched_at": null,
       "created_at": "2026-03-24T13:48:02.000Z",
-      "reasoning": "Perfect match found. All 4 size variants (6, 6.5, 7, 8) matched exactly with SKU HV3032-600. Total quantity 8 units matches invoice exactly. All variants have identical unit price 447.66. Line total calculation: 8 \u00d7 447.66 = 3,581.28 verified. 100% match on SKU, price, and quantity."
+      "reasoning": "Perfect match found. All 4 size variants (6, 6.5, 7, 8) matched exactly with SKU HV3032-600. Total quantity 8 units matches invoice exactly. All variants have identical unit price 447.66. Line total calculation: 8 × 447.66 = 3,581.28 verified. 100% match on SKU, price, and quantity."
     },
     {
       "id": 31,

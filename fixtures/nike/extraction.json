@@ -82,7 +82,7 @@
       {
         "row_id": "yyi0wkeq",
         "field": "total_amount_before_vat",
-        "value": 155091.24,
+        "value": 155089.80,
         "is_required": true
       },
       {
@@ -94,7 +94,7 @@
       {
         "row_id": "0oq6vmiv",
         "field": "total_amount",
-        "value": 155091.24,
+        "value": 155089.80,
         "is_required": true
       },
       {
@@ -484,8 +484,8 @@
         "item_description": "W NIKE AIR ZOOM BELLA 7",
         "unit_of_measurement": "PR",
         "quantity": 24,
-        "unit_price": 220.86,
-        "total_price_before_vat": 5300.64,
+        "unit_price": 220.80,
+        "total_price_before_vat": 5299.20,
         "row_bbox": {
           "x_min": 44,
           "y_min": 658,
