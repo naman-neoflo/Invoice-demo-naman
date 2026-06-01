@@ -543,7 +543,7 @@ function AskNeoFloPage() {
 
           {/* Header */}
           <header className="anf-header">
-            <div className="anf-brand">Ask <span>Neoflo</span></div>
+            <div className="anf-brand">Ask <span>Neo</span></div>
             <div className="anf-header-r">
             </div>
           </header>
@@ -558,7 +558,7 @@ function AskNeoFloPage() {
                   <div className="anf-empty">
                     <img src="https://framerusercontent.com/images/5GeOj2lMEsjJztk3pYdbgiEwGXk.png" alt="NeoFlo" className="anf-empty-logo" />
                     <h2>How can I <span>help you</span> today?</h2>
-                    <p>Ask Neoflo turns your invoice archive into instant answers. Type your query to get started.</p>
+                    <p>Ask Neo turns your invoice archive into instant answers. Type your query to get started.</p>
                   </div>
                 ) : msgs.map(msg => (
                   <div key={msg.id} className={`anf-msg${msg.role === "user" ? " anf-msg-u" : " anf-msg-b"}`}>

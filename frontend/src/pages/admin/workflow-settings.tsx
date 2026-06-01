@@ -594,13 +594,14 @@ const NAV_CONFIG_KEY = 'nav_view_config';
 interface NavItemConfig { key: string; label: string; }
 
 const DEFAULT_NAV_ITEMS: NavItemConfig[] = [
-  { key: 'dashboard',        label: 'Dashboard'        },
-  { key: 'reporting',        label: 'Reporting'        },
-  { key: 'arForecast',       label: 'AR Forecast'      },
-  { key: 'cashApplication',  label: 'Cash Application' },
-  { key: 'askNeoflo',        label: 'Ask Neoflo'       },
-  { key: 'vendorOnboarding', label: 'Vendor Onboarding'},
-  { key: 'financeOS',        label: 'Finance OS'       },
+  { key: 'dashboard',        label: 'Dashboard'            },
+  { key: 'reporting',        label: 'Reporting'            },
+  { key: 'arForecast',       label: 'AR Forecast'          },
+  { key: 'cashApplication',  label: 'Cash Application'     },
+  { key: 'askNeoflo',        label: 'Ask Neo'              },
+  { key: 'vendorOnboarding', label: 'Restaurant Onboarding'},
+  { key: 'driverOnboarding', label: 'Driver Onboarding'   },
+  { key: 'financeOS',        label: 'Finance OS'           },
 ];
 
 const PAGE_DISPLAY: Record<string, string> = {
@@ -608,8 +609,9 @@ const PAGE_DISPLAY: Record<string, string> = {
   reporting:        'Reporting',
   arForecast:       'AR Forecast',
   cashApplication:  'Cash Application',
-  askNeoflo:        'Ask Neoflo',
-  vendorOnboarding: 'Vendor Onboarding',
+  askNeoflo:        'Ask Neo',
+  vendorOnboarding: 'Restaurant Onboarding',
+  driverOnboarding: 'Driver Onboarding',
   financeOS:        'Finance OS',
 };
 
@@ -620,10 +622,19 @@ function loadNavConfig(): NavItemConfig[] {
     if (saved) {
       const parsed: NavItemConfig[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        const savedMap = new Map(parsed.map((i: NavItemConfig) => [i.key, i]));
-        // Always rebuild in DEFAULT_NAV_ITEMS order so new items (askNeoflo,
-        // vendorOnboarding, financeOS) are never missing or out of place.
-        return DEFAULT_NAV_ITEMS.map(d => savedMap.get(d.key) ?? d);
+        // Return saved order as-is so View Management matches the sidebar.
+        // Append any new DEFAULT_NAV_ITEMS keys that aren't in the saved config.
+        const savedKeys = new Set(parsed.map((i: NavItemConfig) => i.key));
+        const missing = DEFAULT_NAV_ITEMS.filter(d => !savedKeys.has(d.key));
+        if (missing.length > 0) {
+          // Insert missing items before financeOS to keep sidebar consistent
+          const result = [...parsed];
+          const fosIdx = result.findIndex(i => i.key === 'financeOS');
+          if (fosIdx > -1) result.splice(fosIdx, 0, ...missing);
+          else result.push(...missing);
+          return result;
+        }
+        return parsed;
       }
     }
   } catch {}

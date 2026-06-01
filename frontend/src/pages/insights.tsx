@@ -863,7 +863,7 @@ function InsightsPage() {
                           ? <span style={{ color: "#475569" }}>—</span>
                           : <span style={{ padding: "3px 10px", borderRadius: 999, background: oldestBg, color: oldestColor, fontSize: 11.5, fontWeight: 500 }}>{u.oldest}d</span>}
                       </td>
-                      <td style={{ padding: "12px 14px", textAlign: "right" }}><strong style={{ color: "#f1f5f9" }}>{u.total > 0 ? usdFmt(u.value) : "$0"}</strong></td>
+                      <td style={{ padding: "12px 14px", textAlign: "right" }}><strong style={{ color: "#0f172a" }}>{u.total > 0 ? usdFmt(u.value) : "$0"}</strong></td>
                     </tr>
                   );
                 })}

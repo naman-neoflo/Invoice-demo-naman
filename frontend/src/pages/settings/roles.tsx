@@ -7,13 +7,14 @@ import { useToast } from "@/components/ui";
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const ALL_PAGES = [
-  { key: "dashboard",       label: "Dashboard",        description: "Main invoice dashboard and overview" },
-  { key: "reporting",       label: "Reporting",        description: "AR insights and analytics" },
-  { key: "arForecast",      label: "AR Forecast",      description: "Accounts receivable forecasting" },
-  { key: "cashApplication", label: "Cash Application", description: "Cash application module" },
-  { key: "financeOS",       label: "Finance OS",       description: "Neoflo Finance OS workspace demo" },
-  { key: "askNeoflo",        label: "Ask Neoflo",        description: "AI-powered invoice knowledge graph chat" },
-  { key: "vendorOnboarding", label: "Vendor Onboarding", description: "Vendor onboarding portal" },
+  { key: "dashboard",        label: "Dashboard",             description: "Main invoice dashboard and overview" },
+  { key: "reporting",        label: "Reporting",             description: "AR insights and analytics" },
+  { key: "arForecast",       label: "AR Forecast",           description: "Accounts receivable forecasting" },
+  { key: "cashApplication",  label: "Cash Application",      description: "Cash application module" },
+  { key: "financeOS",        label: "Finance OS",            description: "Neoflo Finance OS workspace demo" },
+  { key: "askNeoflo",        label: "Ask Neo",               description: "AI-powered invoice knowledge graph chat" },
+  { key: "vendorOnboarding", label: "Restaurant Onboarding", description: "Restaurant onboarding portal" },
+  { key: "driverOnboarding", label: "Driver Onboarding",     description: "Driver onboarding portal" },
 ];
 
 const ROLES = [
