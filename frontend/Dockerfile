@@ -10,6 +10,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ARG NEXT_PUBLIC_BE_BASE_URL=http://localhost:8099
 ENV NEXT_PUBLIC_BE_BASE_URL=${NEXT_PUBLIC_BE_BASE_URL}
 
+# BE_BASE_URL is used by next.config.ts rewrites() at build time so the
+# /api/* and /cash-api/* proxy destinations are baked into the standalone server.
+ARG BE_BASE_URL=http://localhost:8099
+ENV BE_BASE_URL=${BE_BASE_URL}
+
 # Build the Next.js app (standalone output)
 RUN npm run build
 
