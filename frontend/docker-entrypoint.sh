@@ -5,7 +5,7 @@ set -e
 mkdir -p /app/public
 cat > /app/public/env-config.js <<EOF
 window._env_ = Object.freeze({
-  "BE_BASE_URL": "${BE_BASE_URL:-}",
+  "BE_BASE_URL": "",
 });
 EOF
 
