@@ -594,17 +594,23 @@ const NAV_CONFIG_KEY = 'nav_view_config';
 interface NavItemConfig { key: string; label: string; }
 
 const DEFAULT_NAV_ITEMS: NavItemConfig[] = [
-  { key: 'dashboard',       label: 'Dashboard'        },
-  { key: 'reporting',       label: 'Reporting'        },
-  { key: 'arForecast',      label: 'AR Forecast'      },
-  { key: 'cashApplication', label: 'Cash Application' },
+  { key: 'dashboard',        label: 'Dashboard'        },
+  { key: 'reporting',        label: 'Reporting'        },
+  { key: 'arForecast',       label: 'AR Forecast'      },
+  { key: 'cashApplication',  label: 'Cash Application' },
+  { key: 'askNeoflo',        label: 'Ask Neoflo'       },
+  { key: 'vendorOnboarding', label: 'Vendor Onboarding'},
+  { key: 'financeOS',        label: 'Finance OS'       },
 ];
 
 const PAGE_DISPLAY: Record<string, string> = {
-  dashboard:       'Dashboard',
-  reporting:       'Reporting',
-  arForecast:      'AR Forecast',
-  cashApplication: 'Cash Application',
+  dashboard:        'Dashboard',
+  reporting:        'Reporting',
+  arForecast:       'AR Forecast',
+  cashApplication:  'Cash Application',
+  askNeoflo:        'Ask Neoflo',
+  vendorOnboarding: 'Vendor Onboarding',
+  financeOS:        'Finance OS',
 };
 
 function loadNavConfig(): NavItemConfig[] {
@@ -614,9 +620,10 @@ function loadNavConfig(): NavItemConfig[] {
     if (saved) {
       const parsed: NavItemConfig[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        const savedKeys = new Set(parsed.map((i: NavItemConfig) => i.key));
-        const missing = DEFAULT_NAV_ITEMS.filter(d => !savedKeys.has(d.key));
-        return missing.length > 0 ? [...parsed, ...missing] : parsed;
+        const savedMap = new Map(parsed.map((i: NavItemConfig) => [i.key, i]));
+        // Always rebuild in DEFAULT_NAV_ITEMS order so new items (askNeoflo,
+        // vendorOnboarding, financeOS) are never missing or out of place.
+        return DEFAULT_NAV_ITEMS.map(d => savedMap.get(d.key) ?? d);
       }
     }
   } catch {}

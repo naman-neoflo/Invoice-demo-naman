@@ -327,6 +327,10 @@ interface NavSidebarProps {
 }
 
 const NAV_CONFIG_KEY = 'nav_view_config';
+// Bump this whenever the default nav order changes so stale localStorage
+// configs get wiped and reset to the new default ordering.
+const NAV_CONFIG_VERSION = 3;
+const NAV_CONFIG_VERSION_KEY = 'nav_view_config_version';
 
 interface NavItemConfig { key: string; label: string; }
 
@@ -382,14 +386,22 @@ const FINANCE_OS_CHILDREN = [
 function readNavConfig(): NavItemConfig[] {
   if (typeof window === 'undefined') return DEFAULT_NAV_CONFIG;
   try {
+    // Version gate: if the stored version is older than current, wipe the saved
+    // config entirely so the user gets a clean default ordering.
+    const storedVersion = parseInt(localStorage.getItem(NAV_CONFIG_VERSION_KEY) || '0', 10);
+    if (storedVersion < NAV_CONFIG_VERSION) {
+      localStorage.removeItem(NAV_CONFIG_KEY);
+      localStorage.setItem(NAV_CONFIG_VERSION_KEY, String(NAV_CONFIG_VERSION));
+      return DEFAULT_NAV_CONFIG;
+    }
+
     const saved = localStorage.getItem(NAV_CONFIG_KEY);
     if (saved) {
       const parsed: NavItemConfig[] = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Append any new default keys that aren't in the saved config
-        const savedKeys = new Set(parsed.map(i => i.key));
-        const missing = DEFAULT_NAV_CONFIG.filter(d => !savedKeys.has(d.key));
-        return missing.length > 0 ? [...parsed, ...missing] : parsed;
+        const savedMap = new Map(parsed.map(i => [i.key, i]));
+        // Always rebuild in DEFAULT_NAV_CONFIG order (preserving custom labels).
+        return DEFAULT_NAV_CONFIG.map(d => savedMap.get(d.key) ?? d);
       }
     }
   } catch {}
@@ -427,7 +439,11 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
   const [navConfig, setNavConfig] = useState<NavItemConfig[]>(DEFAULT_NAV_CONFIG);
 
   useEffect(() => {
-    setNavConfig(readNavConfig());
+    const corrected = readNavConfig();
+    // Persist corrected ordering back to localStorage so stale saved configs
+    // (where askNeoflo/vendorOnboarding were appended after financeOS) get fixed.
+    try { localStorage.setItem(NAV_CONFIG_KEY, JSON.stringify(corrected)); } catch {}
+    setNavConfig(corrected);
     const sync = () => setNavConfig(readNavConfig());
     window.addEventListener('nav_config_update', sync);
     window.addEventListener('storage', sync);
@@ -454,11 +470,17 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
 
   // Use effectiveRole (previewRole if set, otherwise real role) for nav visibility
   const navItems = useMemo(() => {
-    const base = navConfig.map(cfg => ({
-      href:    NAV_HREF[cfg.key] ?? '/',
-      label:   cfg.label,
-      icon:    NAV_ICON[cfg.key] ?? <IconDashboard />,
-      pageKey: cfg.key,
+    // Use DEFAULT_NAV_CONFIG as the authoritative list of items so that new
+    // entries (askNeoflo, vendorOnboarding) are ALWAYS present regardless of
+    // what is (or isn't) saved in localStorage / navConfig.
+    // navConfig is only consulted for custom label overrides.
+    const labelOverrides = new Map(navConfig.map(cfg => [cfg.key, cfg.label]));
+
+    const base = DEFAULT_NAV_CONFIG.map(d => ({
+      href:    NAV_HREF[d.key] ?? '/',
+      label:   labelOverrides.get(d.key) ?? d.label,
+      icon:    NAV_ICON[d.key] ?? <IconDashboard />,
+      pageKey: d.key,
       group:   "main" as const,
     }));
 
@@ -767,9 +789,110 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
             return renderLink(item);
           };
 
+          // Render Ask Neoflo and Vendor Onboarding as hardcoded static items
+          // so they are ALWAYS visible regardless of navConfig / localStorage.
+          const renderStaticLink = (href: string, label: string, icon: React.ReactNode, key: string) => {
+            const active = isActive(href);
+            return (
+              <Link
+                key={key}
+                href={href}
+                title={collapsed ? label : undefined}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  width: collapsed ? 40 : "calc(100% - 16px)",
+                  height: collapsed ? 40 : "auto",
+                  margin: collapsed ? "2px auto" : "2px 8px",
+                  padding: collapsed ? 0 : "10px 12px",
+                  justifyContent: collapsed ? "center" : "flex-start",
+                  background: active ? ACTIVE_BG : "transparent",
+                  borderRadius: 8,
+                  color: "#fff",
+                  fontSize: 14,
+                  fontWeight: 400,
+                  textDecoration: "none",
+                  transition: "background 0.15s",
+                }}
+                onMouseEnter={e => { if (!active) (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.08)"; }}
+                onMouseLeave={e => { if (!active) (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; }}
+              >
+                <span style={{ flexShrink: 0 }}>{icon}</span>
+                {!collapsed && <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>}
+              </Link>
+            );
+          };
+
           return (
             <>
-              {mainItems.map(renderMainItem)}
+              {/* Render all main items EXCEPT askNeoflo, vendorOnboarding, financeOS */}
+              {mainItems
+                .filter(i => !["askNeoflo", "vendorOnboarding", "financeOS"].includes(i.pageKey))
+                .map(renderMainItem)}
+
+              {/* Hardcoded Ask Neoflo — always visible, immune to localStorage */}
+              {renderStaticLink("/ask-neoflo", "Ask Neoflo", <IconAskNeoflo />, "askNeoflo")}
+
+              {/* Hardcoded Vendor Onboarding expandable section — always visible */}
+              <div key="vendorOnboarding-static">
+                <button
+                  onClick={() => setVendorOnboardingOpen(o => !o)}
+                  title={collapsed ? "Vendor Onboarding" : undefined}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    width: collapsed ? 40 : "calc(100% - 16px)",
+                    height: collapsed ? 40 : "auto",
+                    margin: collapsed ? "2px auto" : "2px 8px",
+                    padding: collapsed ? 0 : "10px 12px",
+                    justifyContent: collapsed ? "center" : "flex-start",
+                    background: isOnVendorOnboarding ? ACTIVE_BG : "transparent",
+                    borderRadius: 8, color: "#fff", fontSize: 14, fontWeight: 400,
+                    border: "none", cursor: "pointer", transition: "background 0.15s", textAlign: "left",
+                  }}
+                  onMouseEnter={e => { if (!isOnVendorOnboarding) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.08)"; }}
+                  onMouseLeave={e => { if (!isOnVendorOnboarding) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                >
+                  <span style={{ flexShrink: 0 }}><IconVendorOnboarding /></span>
+                  {!collapsed && (
+                    <>
+                      <span style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Vendor Onboarding</span>
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                        style={{ flexShrink: 0, transition: "transform 0.18s", transform: vendorOnboardingOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+                        <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </>
+                  )}
+                </button>
+                {vendorOnboardingOpen && !collapsed && (
+                  <div style={{ marginLeft: 8, marginRight: 8, marginBottom: 4 }}>
+                    {VENDOR_ONBOARDING_CHILDREN.map(child => {
+                      const childActive = router.pathname === child.href || router.pathname.startsWith(child.href);
+                      return (
+                        <Link key={child.href} href={child.href}
+                          style={{
+                            display: "flex", alignItems: "center", gap: 10,
+                            padding: "7px 12px 7px 36px", borderRadius: 7,
+                            color: childActive ? "#fff" : "rgba(255,255,255,0.6)",
+                            fontSize: 13, fontWeight: childActive ? 500 : 400,
+                            textDecoration: "none",
+                            background: childActive ? "rgba(255,255,255,0.1)" : "transparent",
+                            transition: "background 0.13s, color 0.13s",
+                          }}
+                          onMouseEnter={e => { if (!childActive) { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.06)"; (e.currentTarget as HTMLAnchorElement).style.color = "#fff"; } }}
+                          onMouseLeave={e => { if (!childActive) { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.6)"; } }}
+                        >
+                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: childActive ? child.dot : "rgba(255,255,255,0.25)", flexShrink: 0 }} />
+                          <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{child.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Finance OS expandable section */}
+              {mainItems.filter(i => i.pageKey === "financeOS").map(renderMainItem)}
 
               {settingsItems.length > 0 && (
                 <>
