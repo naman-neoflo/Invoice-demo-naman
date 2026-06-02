@@ -13,7 +13,7 @@ const ALL_PAGES = [
   { key: "cashApplication",  label: "Cash Application",      description: "Cash application module" },
   { key: "financeOS",        label: "Finance OS",            description: "Neoflo Finance OS workspace demo" },
   { key: "askNeoflo",        label: "Ask Neo",               description: "AI-powered invoice knowledge graph chat" },
-  { key: "vendorOnboarding", label: "Restaurant Onboarding", description: "Restaurant onboarding portal" },
+  { key: "vendorOnboarding", label: "Vendor Onboarding", description: "Vendor onboarding portal" },
   { key: "driverOnboarding", label: "Driver Onboarding",     description: "Driver onboarding portal" },
 ];
 

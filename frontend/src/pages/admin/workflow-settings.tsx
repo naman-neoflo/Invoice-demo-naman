@@ -599,7 +599,7 @@ const DEFAULT_NAV_ITEMS: NavItemConfig[] = [
   { key: 'arForecast',       label: 'AR Forecast'          },
   { key: 'cashApplication',  label: 'Cash Application'     },
   { key: 'askNeoflo',        label: 'Ask Neo'              },
-  { key: 'vendorOnboarding', label: 'Restaurant Onboarding'},
+  { key: 'vendorOnboarding', label: 'Vendor Onboarding'},
   { key: 'driverOnboarding', label: 'Driver Onboarding'   },
   { key: 'financeOS',        label: 'Finance OS'           },
 ];
@@ -610,7 +610,7 @@ const PAGE_DISPLAY: Record<string, string> = {
   arForecast:       'AR Forecast',
   cashApplication:  'Cash Application',
   askNeoflo:        'Ask Neo',
-  vendorOnboarding: 'Restaurant Onboarding',
+  vendorOnboarding: 'Vendor Onboarding',
   driverOnboarding: 'Driver Onboarding',
   financeOS:        'Finance OS',
 };

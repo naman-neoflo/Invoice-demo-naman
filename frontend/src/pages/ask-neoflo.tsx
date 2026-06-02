@@ -436,11 +436,40 @@ function AskNeoFloPage() {
     setTraceLabel("PEV Trace")
   }
 
+  const FAQ_QUESTIONS = [
+    { template: "simple", question: "What is the total spend and WHT for Deloitte Touche Solutions across all invoices?" },
+    { template: "simple", question: "Give me a spend summary across all vendors." },
+    { template: "simple", question: "Which vendor had the highest total spend in April 2026?" },
+    { template: "medium", question: "Which vendors sent more than 2 invoices, and how many did each send?" },
+    { template: "medium", question: "List all invoices from Deloitte Touche Solutions with their dates and amounts." },
+    { template: "medium", question: "Which vendors billed in USD and what was their total spend?" },
+    { template: "medium", question: "Which invoices had a total amount before VAT greater than 10,000,000?" },
+    { template: "medium", question: "Which invoices had withholding tax applied?" },
+    { template: "complex", question: "What is the average ingestion lag between invoice date and ingestion date across all vendors?" },
+    { template: "complex", question: "Show the monthly invoice count and total spend breakdown for 2026." },
+    { template: "complex", question: "Give me a month-by-month breakdown of invoices and WHT for Deloitte Touche Solutions." },
+    { template: "complex", question: "Which vendors have invoices spanning more than one month?" },
+    { template: "agentic", question: "What is the total spend for Deloitte Touche Solutions and the payment terms for GS Paperboard & Packaging?" },
+    { template: "agentic", question: "What is the total spend for Meta Platforms Ireland Limited and the invoice count for PT Google Indonesia?" },
+    { template: "agentic", question: "List invoices above 10,000,000 IDR and show the total WHT for vendors that had withholding tax applied." },
+    { template: "agentic", question: "What is the total spend on invoices backed by a PO versus invoices with no PO reference? How many invoices fall in each category?" },
+    { template: "medium", question: "Which vendor has the highest total spend on invoices that have no PO number attached?" },
+    { template: "complex", question: "Which vendors have sent some invoices with a PO reference and others without? List them with the count of each." },
+    { template: "simple", question: "What is the total VAT (PPN) amount across all invoices that have a Faktur Pajak?" },
+    { template: "medium", question: "List all invoices that have a Faktur Pajak number, along with their taxable amount (DPP) and VAT amount (PPN)." },
+    { template: "agentic", question: "Which invoices have a Faktur Pajak attached and which do not? Show the total spend for each group." },
+  ]
+
   async function openTestQs() {
     setTestQsOpen(true)
     if (testQs.length === 0) {
-      try { setTestQs(await (await fetch(API("test-questions"))).json()) }
-      catch { /* ignore */ }
+      // Use hardcoded FAQ questions; fall back to API if available
+      try {
+        const apiQs = await (await fetch(API("test-questions"))).json()
+        setTestQs(apiQs.length ? apiQs : FAQ_QUESTIONS)
+      } catch {
+        setTestQs(FAQ_QUESTIONS)
+      }
     }
   }
 
@@ -545,6 +574,13 @@ function AskNeoFloPage() {
           <header className="anf-header">
             <div className="anf-brand">Ask <span>Neo</span></div>
             <div className="anf-header-r">
+              <button
+                className="anf-header-btn"
+                onClick={() => openTestQs()}
+                title="Frequently Asked Questions"
+              >
+                FAQ
+              </button>
             </div>
           </header>
 
@@ -674,7 +710,7 @@ function AskNeoFloPage() {
           onClick={e => { if (e.target === e.currentTarget) setTestQsOpen(false) }}>
           <div className="anf-modal">
             <div className="anf-modal-hdr">
-              <h2>Test Questions</h2>
+              <h2>FAQ</h2>
               <button className="anf-modal-close" onClick={() => setTestQsOpen(false)}>×</button>
             </div>
             <div className="anf-modal-body">
@@ -777,6 +813,13 @@ const CSS = `
 }
 .anf-brand span { color:#60a5fa; }
 .anf-header-r { display:flex; align-items:center; gap:6px; }
+.anf-header-btn {
+  padding:6px 14px; border-radius:7px; border:1px solid #274B95;
+  font-size:12px; font-weight:600; cursor:pointer;
+  background:#274B95; color:#fff; font-family:inherit;
+  transition:all 0.15s; letter-spacing:0.3px;
+}
+.anf-header-btn:hover { background:#041C4C; border-color:#041C4C; }
 .anf-hdr-btn {
   padding:5px 12px; border-radius:7px; border:1px solid rgba(255,255,255,0.15);
   font-size:12px; cursor:pointer; background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.7);
@@ -958,41 +1001,42 @@ const CSS = `
   backdrop-filter:blur(4px);
 }
 .anf-modal {
-  background:#041C4C; border:1px solid rgba(255,255,255,0.12); border-radius:16px;
+  background:#fff; border:1px solid #e2e8f0; border-radius:16px;
   width:760px; max-width:95vw; max-height:85vh;
   display:flex; flex-direction:column; overflow:hidden;
-  box-shadow:0 24px 60px rgba(0,0,0,.5);
+  box-shadow:0 24px 60px rgba(0,0,0,.15);
 }
 .anf-modal-hdr {
-  padding:17px 22px; border-bottom:1px solid rgba(255,255,255,0.08);
+  padding:17px 22px; border-bottom:1px solid #e2e8f0;
   display:flex; align-items:center; justify-content:space-between;
-  background:#020f2d;
+  background:#f8fafc;
 }
-.anf-modal-hdr h2 { font-size:15px; font-weight:600; color:#fff; margin:0; }
+.anf-modal-hdr h2 { font-size:15px; font-weight:600; color:#0f172a; margin:0; }
 .anf-modal-close {
-  background:none; border:none; color:rgba(255,255,255,0.4);
+  background:none; border:none; color:#94a3b8;
   font-size:20px; cursor:pointer; line-height:1; padding:0;
 }
-.anf-modal-close:hover { color:#fff; }
+.anf-modal-close:hover { color:#0f172a; }
 .anf-modal-body {
   overflow-y:auto; padding:18px 22px;
   display:flex; flex-direction:column; gap:10px;
+  background:#fff;
 }
 .anf-tq-group { margin-bottom:4px; }
 .anf-tq-lbl {
-  font-size:10px; font-weight:700; color:#60a5fa;
+  font-size:10px; font-weight:700; color:#274B95;
   letter-spacing:1.1px; text-transform:uppercase; margin-bottom:6px;
 }
 .anf-tq-card {
-  background:#0a1f4d; border:1px solid rgba(255,255,255,0.08); border-radius:10px;
+  background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px;
   padding:12px 14px; display:flex; flex-direction:column; gap:6px;
   margin-bottom:6px;
 }
-.anf-tq-q { font-size:13px; color:#e2e8f0; line-height:1.4; }
+.anf-tq-q { font-size:13px; color:#0f172a; line-height:1.4; }
 .anf-tq-try {
   align-self:flex-start; padding:4px 12px; font-size:12px;
-  border-radius:6px; background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3);
-  color:#60a5fa; cursor:pointer; transition:all .15s; font-family:inherit;
+  border-radius:6px; background:#eff6ff; border:1px solid #bfdbfe;
+  color:#274B95; cursor:pointer; transition:all .15s; font-family:inherit; font-weight:500;
 }
 .anf-tq-try:hover { background:#274B95; color:#fff; border-color:#274B95; }
 
@@ -1002,5 +1046,5 @@ const CSS = `
 .anf-modal-body::-webkit-scrollbar { width:5px; }
 .anf-messages::-webkit-scrollbar-thumb,
 .anf-chat-list::-webkit-scrollbar-thumb,
-.anf-modal-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+.anf-modal-body::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
 `

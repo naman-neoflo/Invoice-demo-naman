@@ -329,7 +329,7 @@ interface NavSidebarProps {
 const NAV_CONFIG_KEY = 'nav_view_config';
 // Bump this whenever the default nav order changes so stale localStorage
 // configs get wiped and reset to the new default ordering.
-const NAV_CONFIG_VERSION = 6;
+const NAV_CONFIG_VERSION = 7;
 const NAV_CONFIG_VERSION_KEY = 'nav_view_config_version';
 
 interface NavItemConfig { key: string; label: string; }
@@ -340,7 +340,7 @@ const DEFAULT_NAV_CONFIG: NavItemConfig[] = [
   { key: 'arForecast',          label: 'AR Forecast'            },
   { key: 'cashApplication',     label: 'Cash Application'       },
   { key: 'askNeoflo',           label: 'Ask Neo'                },
-  { key: 'vendorOnboarding',    label: 'Restaurant Onboarding'  },
+  { key: 'vendorOnboarding',    label: 'Vendor Onboarding'  },
   { key: 'driverOnboarding',    label: 'Driver Onboarding'      },
   { key: 'financeOS',           label: 'Finance OS'             },
 ];
@@ -369,7 +369,7 @@ const NAV_ICON: Record<string, React.ReactNode> = {
 
 // Vendor Onboarding sub-sections
 const VENDOR_ONBOARDING_CHILDREN = [
-  { label: "Restaurant Portal", href: "/vendor-onboarding/portal", dot: "#3b82f6" },
+  { label: "Vendor Portal", href: "/vendor-onboarding/portal", dot: "#3b82f6" },
   { label: "Admin Portal",  href: "/vendor-onboarding/admin",  dot: "#8b5cf6" },
 ];
 
