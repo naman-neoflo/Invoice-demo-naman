@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ToastProvider } from "@/components/ui";
 import { AuthProvider } from "@/context/AuthContext";
 import { NavSidebar, PreviewBanner } from "@/components/NavSidebar";
+import { FreightProvider } from "@/contexts/FreightContext";
 
 const AUTH_ROUTES = ["/auth/login", "/auth/signup", "/auth/accept-invite"];
 const SIDEBAR_EXPANDED = 240;
@@ -40,9 +41,11 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <ToastProvider>
       <AuthProvider>
-        <AppShell>
-          <Component {...pageProps} />
-        </AppShell>
+        <FreightProvider>
+          <AppShell>
+            <Component {...pageProps} />
+          </AppShell>
+        </FreightProvider>
       </AuthProvider>
     </ToastProvider>
   );

@@ -108,6 +108,18 @@ function IconAskNeoflo() {
   );
 }
 
+function IconFreight() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <rect x="1" y="8" width="16" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M3 8V6a6 6 0 0 1 12 0v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M5 12h8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <circle cx="4.5" cy="16.5" r="1" fill="currentColor" />
+      <circle cx="13.5" cy="16.5" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
 function IconVendorOnboarding() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -329,7 +341,7 @@ interface NavSidebarProps {
 const NAV_CONFIG_KEY = 'nav_view_config';
 // Bump this whenever the default nav order changes so stale localStorage
 // configs get wiped and reset to the new default ordering.
-const NAV_CONFIG_VERSION = 7;
+const NAV_CONFIG_VERSION = 9;
 const NAV_CONFIG_VERSION_KEY = 'nav_view_config_version';
 
 interface NavItemConfig { key: string; label: string; }
@@ -339,6 +351,7 @@ const DEFAULT_NAV_CONFIG: NavItemConfig[] = [
   { key: 'reporting',           label: 'Reporting'              },
   { key: 'arForecast',          label: 'AR Forecast'            },
   { key: 'cashApplication',     label: 'Cash Application'       },
+  { key: 'freight',             label: 'Freight'                },
   { key: 'askNeoflo',           label: 'Ask Neo'                },
   { key: 'vendorOnboarding',    label: 'Vendor Onboarding'  },
   { key: 'driverOnboarding',    label: 'Driver Onboarding'      },
@@ -354,6 +367,7 @@ const NAV_HREF: Record<string, string> = {
   askNeoflo:         '/ask-neoflo',
   vendorOnboarding:  '/vendor-onboarding',
   driverOnboarding:  '/driver-onboarding',
+  freight:           '/freight',
 };
 
 const NAV_ICON: Record<string, React.ReactNode> = {
@@ -365,12 +379,20 @@ const NAV_ICON: Record<string, React.ReactNode> = {
   askNeoflo:         <IconAskNeoflo />,
   vendorOnboarding:  <IconVendorOnboarding />,
   driverOnboarding:  <IconVendorOnboarding />,
+  freight:           <IconFreight />,
 };
 
 // Vendor Onboarding sub-sections
 const VENDOR_ONBOARDING_CHILDREN = [
   { label: "Vendor Portal", href: "/vendor-onboarding/portal", dot: "#3b82f6" },
   { label: "Admin Portal",  href: "/vendor-onboarding/admin",  dot: "#8b5cf6" },
+];
+
+// Freight sub-sections
+const FREIGHT_CHILDREN = [
+  { label: "Reconciliations", href: "/freight",            dot: "#3b82f6" },
+  { label: "Dashboard",       href: "/freight/dashboard",  dot: "#10b981" },
+  { label: "AP Queue",        href: "/freight/ap-queue",   dot: "#f59e0b" },
 ];
 
 // Finance OS sub-sections — shown as an expandable group under "Finance OS"
@@ -423,6 +445,10 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
 
   const isOnVendorOnboarding = router.pathname.startsWith("/vendor-onboarding");
   const [vendorOnboardingOpen, setVendorOnboardingOpen] = useState(false);
+
+  const isOnFreight = router.pathname.startsWith("/freight");
+  const [freightOpen, setFreightOpen] = useState(false);
+  useEffect(() => { if (isOnFreight) setFreightOpen(true); }, [isOnFreight]);
   // Auto-expand when user navigates to any Vendor Onboarding route
   useEffect(() => { if (isOnVendorOnboarding) setVendorOnboardingOpen(true); }, [isOnVendorOnboarding]);
 
@@ -494,6 +520,17 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
     }));
 
     let visible = base;
+
+    // Module filter — set at login time, stored in localStorage
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem("nav_module_filter") : null;
+      if (raw) {
+        const allowed: string[] = JSON.parse(raw);
+        if (Array.isArray(allowed) && allowed.length > 0) {
+          visible = visible.filter(item => allowed.includes(item.pageKey));
+        }
+      }
+    } catch { /* ignore */ }
 
     // Non-managers: always filter by page_access.
     // For real users: backend populates page_access from tenant role_permissions.
@@ -634,6 +671,69 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
           };
 
           const renderMainItem = (item: typeof navItems[number]) => {
+            if (item.pageKey === "freight") {
+              const active = isOnFreight;
+              return (
+                <div key="freight">
+                  <button
+                    onClick={() => setFreightOpen(o => !o)}
+                    title={collapsed ? "Freight" : undefined}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 12,
+                      width: collapsed ? 40 : "calc(100% - 16px)",
+                      height: collapsed ? 40 : "auto",
+                      margin: collapsed ? "2px auto" : "2px 8px",
+                      padding: collapsed ? 0 : "10px 12px",
+                      justifyContent: collapsed ? "center" : "flex-start",
+                      background: active ? ACTIVE_BG : "transparent",
+                      borderRadius: 8, color: "#fff", fontSize: 14, fontWeight: 400,
+                      border: "none", cursor: "pointer", transition: "background 0.15s", textAlign: "left",
+                    }}
+                    onMouseEnter={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.08)"; }}
+                    onMouseLeave={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                  >
+                    <span style={{ flexShrink: 0 }}>{item.icon}</span>
+                    {!collapsed && (
+                      <>
+                        <span style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.label}</span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+                          style={{ flexShrink: 0, transition: "transform 0.18s", transform: freightOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+                          <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                  {freightOpen && !collapsed && (
+                    <div style={{ marginLeft: 8, marginRight: 8, marginBottom: 4 }}>
+                      {FREIGHT_CHILDREN.map(child => {
+                        const childActive = child.href === "/freight"
+                          ? router.pathname === "/freight"
+                          : router.pathname.startsWith(child.href);
+                        return (
+                          <Link key={child.href} href={child.href}
+                            style={{
+                              display: "flex", alignItems: "center", gap: 10,
+                              padding: "7px 12px 7px 36px", borderRadius: 7,
+                              color: childActive ? "#fff" : "rgba(255,255,255,0.6)",
+                              fontSize: 13, fontWeight: childActive ? 500 : 400,
+                              textDecoration: "none",
+                              background: childActive ? "rgba(255,255,255,0.1)" : "transparent",
+                              transition: "background 0.13s, color 0.13s",
+                            }}
+                            onMouseEnter={e => { if (!childActive) { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.06)"; (e.currentTarget as HTMLAnchorElement).style.color = "#fff"; } }}
+                            onMouseLeave={e => { if (!childActive) { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.6)"; } }}
+                          >
+                            <span style={{ width: 6, height: 6, borderRadius: "50%", background: childActive ? child.dot : "rgba(255,255,255,0.25)", flexShrink: 0 }} />
+                            <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{child.label}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
             if (item.pageKey === "vendorOnboarding") {
               const active = isOnVendorOnboarding;
               return (
@@ -998,7 +1098,7 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
 
                 {/* Sign out */}
                 <button
-                  onClick={() => { setProfileOpen(false); logout().then(() => router.push("/auth/login")); }}
+                  onClick={() => { setProfileOpen(false); localStorage.removeItem("nav_module_filter"); logout().then(() => router.push("/auth/login")); }}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-sm transition-colors rounded-lg"
                   style={{ color: "#f87171" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "rgba(248,113,113,0.08)")}
