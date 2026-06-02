@@ -10,7 +10,7 @@ import {
 
 // ── localStorage helpers ───────────────────────────────────────────────────────
 
-const LS_KEY = "freight_state_v1";
+const LS_KEY = "freight_state_v3"; // bumped: exceptions back to pending, require manual approval
 
 function loadState() {
   if (typeof window === "undefined") return null;
@@ -67,6 +67,7 @@ export interface ApCounts {
 interface FreightContextValue {
   uploads: Record<string, UploadState>;
   addDocument: (setId: string, type: "bol" | "invoice") => boolean;
+  resetLineItems: (setId: string) => void;
   reconciliations: Reconciliation[];
   getLineItems: (setId: string) => LineItem[];
   approveLineItem: (setId: string, itemId: string) => void;
@@ -124,6 +125,16 @@ export function FreightProvider({ children }: { children: ReactNode }) {
       DOCUMENT_SETS[setId].lineItems.map((i) => ({ ...i })),
     [lineItemsBySet]
   );
+
+  // Clear any saved line-item state for a setId so a fresh upload always
+  // starts with the original DOCUMENT_SETS data (pending exceptions).
+  const resetLineItems = useCallback((setId: string) => {
+    setLineItemsBySet(prev => {
+      const next = { ...prev };
+      delete next[setId];
+      return next;
+    });
+  }, []);
 
   const approveLineItem = useCallback((setId: string, itemId: string) => {
     setLineItemsBySet((prev) => {
@@ -253,6 +264,7 @@ export function FreightProvider({ children }: { children: ReactNode }) {
   const value: FreightContextValue = {
     uploads,
     addDocument,
+    resetLineItems,
     reconciliations,
     getLineItems,
     approveLineItem,

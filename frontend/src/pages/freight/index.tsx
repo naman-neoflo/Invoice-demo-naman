@@ -237,7 +237,7 @@ function ProcessingRow({ entry: p, onDismiss, onTryAgain, onReview }: {
       {/* Current Stage */}
       <td style={{ padding: "14px 18px" }}>
         {p.done ? (
-          <StagePill stage={DOCUMENT_SETS[p.bolSetId]?.hasExceptions ? "Exceptions" : "Reconciled"} tone={DOCUMENT_SETS[p.bolSetId]?.hasExceptions ? "amber" : "green"} />
+          <StagePill stage={DOCUMENT_SETS[p.bolSetId]?.hasExceptions ? "Exceptions" : "Reconciled"} tone={DOCUMENT_SETS[p.bolSetId]?.hasExceptions ? "amber" : "teal"} />
         ) : isMismatch ? (
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
@@ -287,13 +287,14 @@ function ProcessingRow({ entry: p, onDismiss, onTryAgain, onReview }: {
 
 // ── Persisted completed rows (survive refresh) ────────────────────────────────
 
-const COMPLETED_KEY = "freight_completed_rows_v1";
+const COMPLETED_KEY = "freight_completed_rows_v2"; // bumped: added reportGenerated per row
 
-interface CompletedRow {
+export interface CompletedRow {
   id: string;
   bolFilename: string;
   invoiceFilename: string;
   setId: string;
+  reportGenerated?: boolean;
 }
 
 function loadCompleted(): CompletedRow[] {
@@ -416,8 +417,10 @@ function FreightHomePage() {
 
   const filteredCompleted = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return completedRows;
-    return completedRows.filter(r => {
+    // newest first
+    const sorted = [...completedRows].reverse();
+    if (!q) return sorted;
+    return sorted.filter(r => {
       const set = DOCUMENT_SETS[r.setId];
       return [r.bolFilename, r.invoiceFilename, set?.carrier ?? "", set?.bolRef ?? ""].some(v => v.toLowerCase().includes(q));
     });
@@ -524,7 +527,7 @@ function FreightHomePage() {
                     entry={p}
                     onDismiss={() => setProcessing(prev => prev.filter(x => x.id !== p.id))}
                     onTryAgain={() => { setProcessing(prev => prev.filter(x => x.id !== p.id)); setShowUploadCard(true); }}
-                    onReview={() => router.push(`/freight/results/${p.bolSetId}`)}
+                    onReview={() => router.push(`/freight/results/${p.bolSetId}?rowId=${p.id}`)}
                   />
                 ))}
 
@@ -555,9 +558,9 @@ function FreightHomePage() {
                 {/* Completed / persisted rows */}
                 {filteredCompleted.map(r => {
                   const set = DOCUMENT_SETS[r.setId];
-                  const target = `/freight/results/${r.setId}`;
-                  const stage = set?.hasExceptions ? "Exceptions" : "Reconciled";
-                  const stageTone = set?.hasExceptions ? "amber" : "green";
+                  const target = `/freight/results/${r.setId}?rowId=${r.id}`;
+                  const stage = r.reportGenerated ? "Report Generated" : set?.hasExceptions ? "Exceptions" : "Reconciled";
+                  const stageTone = r.reportGenerated ? "blue" : set?.hasExceptions ? "amber" : "green";
                   return (
                     <tr
                       key={r.id}
