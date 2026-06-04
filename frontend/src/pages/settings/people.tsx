@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { withAuthGuard } from "@/components/AuthGuard";
 import { useAuth } from "@/hooks/useAuth";
 import { settingsService, ApiError } from "@/services";
+import { adminService } from "@/services/admin";
 import { useToast } from "@/components/ui";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -284,6 +285,8 @@ function PeoplePage() {
   const [tab, setTab] = useState<Tab>("users");
   const [userList, setUserList] = useState<UserRecord[]>([]);
   const [inviteList, setInviteList] = useState<PendingInvite[]>([]);
+  const [pendingUsers, setPendingUsers] = useState<UserRecord[]>([]);
+  const [assigningId, setAssigningId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteLink, setInviteLink] = useState<{ link: string; email: string } | null>(null);
@@ -296,9 +299,10 @@ function PeoplePage() {
 
   const load = useCallback(async () => {
     try {
-      const res = await settingsService.getPeople<{ users: UserRecord[]; pending_invites: PendingInvite[] }>();
+      const res = await settingsService.getPeople<{ users: UserRecord[]; pending_invites: PendingInvite[]; pending_users: UserRecord[] }>();
       setUserList(res.users);
       setInviteList(res.pending_invites);
+      setPendingUsers(res.pending_users ?? []);
     } catch {
       toast("Failed to load people", "error");
     } finally {
@@ -346,6 +350,21 @@ function PeoplePage() {
 
   const handleRevokeInvite = (inv: PendingInvite) => {
     setConfirmAction({ type: "revoke_invite", id: inv.id, label: inv.email });
+  };
+
+  const handleGrantAccess = async (u: UserRecord) => {
+    if (!user?.tenant_id) { toast("No tenant to assign to", "error"); return; }
+    setAssigningId(u.id);
+    try {
+      await adminService.assignUser(u.id, user.tenant_id, "member");
+      setPendingUsers(prev => prev.filter(x => x.id !== u.id));
+      await load();
+      toast(`Access granted to ${u.full_name || u.email}`, "success");
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : "Failed to grant access", "error");
+    } finally {
+      setAssigningId(null);
+    }
   };
 
   const handleConfirm = async () => {
@@ -413,6 +432,9 @@ function PeoplePage() {
                 {inviteList.length > 0 && (
                   <span className="ml-2" style={{ color: "#D97706" }}>· {inviteList.length} pending invite{inviteList.length !== 1 ? "s" : ""}</span>
                 )}
+                {pendingUsers.length > 0 && (
+                  <span className="ml-2 font-semibold" style={{ color: "#D97706" }}>· {pendingUsers.length} awaiting approval</span>
+                )}
               </p>
             </div>
             {canInvite && (
@@ -458,6 +480,36 @@ function PeoplePage() {
       </div>
 
       <div className="p-6">
+
+        {/* ── Pending access banner (self-signed-up users awaiting tenant assignment) */}
+        {pendingUsers.length > 0 && (
+          <div className="mb-5 rounded-xl overflow-hidden" style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.3)" }}>
+            <div className="px-4 py-3 flex items-center gap-2 border-b" style={{ borderColor: "rgba(251,191,36,0.2)" }}>
+              <span className="text-xs font-semibold" style={{ color: "#D97706" }}>
+                {pendingUsers.length} user{pendingUsers.length !== 1 ? "s" : ""} awaiting access approval
+              </span>
+            </div>
+            <div>
+              {pendingUsers.map(u => (
+                <div key={u.id} className="px-4 py-3 flex items-center justify-between gap-4" style={{ borderBottom: "1px solid rgba(251,191,36,0.1)" }}>
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: "#101828" }}>{u.full_name || u.email}</p>
+                    <p className="text-xs" style={{ color: "#6B7280" }}>{u.email}</p>
+                  </div>
+                  <button
+                    disabled={assigningId === u.id}
+                    onClick={() => handleGrantAccess(u)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold"
+                    style={{ background: "#2563EB", color: "#fff", border: "none", cursor: assigningId === u.id ? "wait" : "pointer", opacity: assigningId === u.id ? 0.6 : 1 }}
+                  >
+                    {assigningId === u.id ? "Granting…" : "Grant Access"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ── Members Tab ──────────────────────────────────────────────────────── */}
         {tab === "users" && (
           <div className="rounded-xl overflow-hidden" style={{ background: "#fff", border: "1px solid #E5E7EB" }}>

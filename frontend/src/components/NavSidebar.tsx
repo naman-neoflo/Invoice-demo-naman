@@ -466,6 +466,9 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
   // Always start with DEFAULT so SSR and first client render match, then
   // apply localStorage value after hydration to avoid hydration mismatch.
   const [navConfig, setNavConfig] = useState<NavItemConfig[]>(DEFAULT_NAV_CONFIG);
+  // Initialise to null so server and first client render both see "no filter".
+  const [navModuleFilter, setNavModuleFilter] = useState<string[] | null>(null);
+  const [rolePermissionsCache, setRolePermissionsCache] = useState<Record<string, string[]> | null>(null);
 
   useEffect(() => {
     const corrected = readNavConfig();
@@ -473,7 +476,30 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
     // (where askNeoflo/vendorOnboarding were appended after financeOS) get fixed.
     try { localStorage.setItem(NAV_CONFIG_KEY, JSON.stringify(corrected)); } catch {}
     setNavConfig(corrected);
-    const sync = () => setNavConfig(readNavConfig());
+
+    const readFilter = () => {
+      try {
+        const raw = localStorage.getItem("nav_module_filter");
+        if (raw) {
+          const parsed: string[] = JSON.parse(raw);
+          setNavModuleFilter(Array.isArray(parsed) && parsed.length > 0 ? parsed : null);
+        } else {
+          setNavModuleFilter(null);
+        }
+      } catch { setNavModuleFilter(null); }
+    };
+
+    const readRoleCache = () => {
+      try {
+        const raw = localStorage.getItem("role_permissions_cache");
+        setRolePermissionsCache(raw ? JSON.parse(raw) : null);
+      } catch { setRolePermissionsCache(null); }
+    };
+
+    readFilter();
+    readRoleCache();
+
+    const sync = () => { setNavConfig(readNavConfig()); readFilter(); readRoleCache(); };
     window.addEventListener('nav_config_update', sync);
     window.addEventListener('storage', sync);
     return () => {
@@ -521,16 +547,10 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
 
     let visible = base;
 
-    // Module filter — set at login time, stored in localStorage
-    try {
-      const raw = typeof window !== "undefined" ? localStorage.getItem("nav_module_filter") : null;
-      if (raw) {
-        const allowed: string[] = JSON.parse(raw);
-        if (Array.isArray(allowed) && allowed.length > 0) {
-          visible = visible.filter(item => allowed.includes(item.pageKey));
-        }
-      }
-    } catch { /* ignore */ }
+    // Module filter — set at login time, read from state (populated after hydration)
+    if (navModuleFilter) {
+      visible = visible.filter(item => navModuleFilter.includes(item.pageKey));
+    }
 
     // Non-managers: always filter by page_access.
     // For real users: backend populates page_access from tenant role_permissions.
@@ -542,18 +562,10 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
       let allowed: string[];
       if (previewRole && user?.role === "tenant_admin") {
         // Read cached role permissions written by the roles settings page
-        try {
-          const cached = typeof window !== "undefined"
-            ? localStorage.getItem("role_permissions_cache")
-            : null;
-          if (cached) {
-            const parsed = JSON.parse(cached) as Record<string, string[]>;
-            allowed = parsed[effectiveRole] ?? base.map(i => i.pageKey);
-          } else {
-            allowed = base.map(i => i.pageKey); // fallback: show all
-          }
-        } catch {
-          allowed = base.map(i => i.pageKey);
+        if (rolePermissionsCache) {
+          allowed = rolePermissionsCache[effectiveRole] ?? base.map(i => i.pageKey);
+        } else {
+          allowed = base.map(i => i.pageKey); // fallback: show all
         }
       } else {
         allowed = user?.page_access ?? [];
@@ -573,7 +585,7 @@ export function NavSidebar({ collapsed, onCollapse }: NavSidebarProps) {
       : [];
 
     return [...visible, ...settingsItems];
-  }, [user, navConfig, effectiveRole]);
+  }, [user, navConfig, effectiveRole, navModuleFilter, rolePermissionsCache]);
 
   // Determine the label for the profile subtitle
   const profileSubtitle = (() => {

@@ -173,9 +173,15 @@ async def get_people(current_user: CurrentUser):
     invite_docs = await _invites(db).find(invite_filter).sort("created_at", -1).to_list(length=200)
     serialized_invites = [_ser_invite(d) for d in invite_docs]
 
+    # Users who self-signed-up have tenant_id=None — surface them so admins can
+    # grant access without leaving the People tab.
+    pending_docs = await users(db).find({"tenant_id": None}).sort("created_at", 1).to_list(length=200)
+    serialized_pending = [_ser_user(d) for d in pending_docs]
+
     return _envelope(data={
         "users": serialized_users,
         "pending_invites": serialized_invites,
+        "pending_users": serialized_pending,
     })
 
 

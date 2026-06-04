@@ -261,6 +261,14 @@ async def list_invoices(
         from bson import ObjectId as _OID
         query["tenant_id"] = _OID(eff_tid)
 
+    # Email-ingested invoices are scoped to the sender so demo users don't see
+    # each other's uploads. Admins see all; manual uploads visible to everyone.
+    if current_user.role != "tenant_admin":
+        query["$or"] = [
+            {"source": {"$ne": "email"}},
+            {"source": "email", "source_meta.sender": current_user.email},
+        ]
+
     if status_filter and status_filter != "all":
         # Map legacy frontend filter values to new status model
         if status_filter == "posted":
@@ -293,8 +301,10 @@ async def list_invoices(
         for run in runs
     ]
 
-    # KPI counts — scoped to same effective tenant as the listing
-    tenant_filter: dict = {"tenant_id": query["tenant_id"]} if "tenant_id" in query else {}  # noqa: E501
+    # KPI counts — scoped to same effective tenant and sender filter as the listing
+    tenant_filter: dict = {"tenant_id": query["tenant_id"]} if "tenant_id" in query else {}
+    if "$or" in query:
+        tenant_filter["$or"] = query["$or"]
     total_all = await pipeline_runs(db).count_documents(tenant_filter)
     awaiting = await pipeline_runs(db).count_documents({
         **tenant_filter,
