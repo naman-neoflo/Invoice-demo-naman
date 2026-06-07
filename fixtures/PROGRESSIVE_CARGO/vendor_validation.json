@@ -83,7 +83,7 @@
           "invoice": [
             {
               "document_id": "ADTO0145",
-              "value": null
+              "value": "MAYBANK BERHAD"
             }
           ],
           "po": [
@@ -107,7 +107,7 @@
           "invoice": [
             {
               "document_id": "ADTO0145",
-              "value": null
+              "value": "562254505118"
             }
           ],
           "po": [
@@ -131,7 +131,7 @@
           "invoice": [
             {
               "document_id": "ADTO0145",
-              "value": null
+              "value": "PROGRESSIVE CARGO & SERVICES SDN BHD"
             }
           ],
           "po": [

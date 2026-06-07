@@ -30,12 +30,12 @@
         "display_name": "Vendor VAT ID",
         "type": "string",
         "required": false,
-        "match_status": "match",
+        "match_status": "mismatch",
         "values": {
           "invoice": [
             {
               "document_id": "INV-SG-202603-a7888",
-              "value": "27HGFDX5678K1Z2"
+              "value": "201609103Z"
             }
           ],
           "po": [
@@ -59,7 +59,7 @@
           "invoice": [
             {
               "document_id": "INV-SG-202603-a7888",
-              "value": "160 Robinson Road #14-04 Singapore Business Federation Centre Singapore 068914"
+              "value": "160 Robinson Road, #14-04, Singapore Business Federation Centre, Singapore 068914"
             }
           ],
           "po": [
@@ -172,11 +172,11 @@
     ],
     "summary": {
       "total_fields": 7,
-      "matched": 3,
-      "mismatched": 4,
+      "matched": 2,
+      "mismatched": 5,
       "missing_required": 0,
       "missing": 0,
-      "match_percentage": 42.86,
+      "match_percentage": 28.57,
       "document_types": [
         "invoice",
         "po"

@@ -1,149 +1,149 @@
 {
-  "invoice_schema": {
+"invoice_schema": {
     "metadata": [
-      {
-        "row_id": "9oyhch1h",
+    {
+        "row_id": "e57k1wys",
         "field": "po_number",
-        "value": "5DFN-VJUR",
+        "value": "PO-00069",
         "is_required": true
-      },
-      {
-        "row_id": "7pozp3gg",
+    },
+    {
+        "row_id": "4gc9bp1v",
         "field": "invoice_number",
         "value": "INV-SG-202603-a7888",
         "is_required": true
-      },
-      {
-        "row_id": "ebyq0o5q",
+    },
+    {
+        "row_id": "cvhix0xw",
         "field": "invoice_date",
         "value": "2026-03-17",
         "is_required": true
-      },
-      {
-        "row_id": "7wp8ft2z",
+    },
+    {
+        "row_id": "llhmngyx",
         "field": "payment_terms",
         "value": "",
         "is_required": false
-      },
-      {
-        "row_id": "0bpgdxtz",
+    },
+    {
+        "row_id": "bmhn155k",
         "field": "due_date",
         "value": "2026-04-16",
         "is_required": false
-      },
-      {
-        "row_id": "dv0iw5q2",
+    },
+    {
+        "row_id": "5m3x0h3s",
         "field": "vendor_name",
         "value": "CATERSPOT SINGAPORE PTE LTD",
         "is_required": true
-      },
-      {
-        "row_id": "zubyfshy",
+    },
+    {
+        "row_id": "yxmqmjjx",
         "field": "vendor_address",
-        "value": "160 Robinson Road #14-04 Singapore Business Federation Centre Singapore 068914",
+        "value": "160 Robinson Road, #14-04, Singapore Business Federation Centre, Singapore 068914",
         "is_required": false
-      },
-      {
-        "row_id": "amuv02i9",
+    },
+    {
+        "row_id": "ye7xkpua",
         "field": "vendor_vat_id",
-        "value": "27HGFDX5678K1Z2",
+        "value": "201609103Z",
         "is_required": false
-      },
-      {
-        "row_id": "quoouaab",
+    },
+    {
+        "row_id": "5xycdf9r",
         "field": "customer_legal_entity",
         "value": "Neoflo Tech PTE LTD",
         "is_required": false
-      },
-      {
-        "row_id": "uqzfjpvs",
+    },
+    {
+        "row_id": "d7b7a0qg",
         "field": "customer_address",
-        "value": "35/38, 24th Main Road, Opposite Brigade Palms, Achappa Layout, Ramaiah Garden, JP Nagar, 7th Phase Bengaluru, Karnataka India - 560078",
+        "value": "35/38, 24th Main Road, Opposite Brigade Palms, Achappa Layout, Ramaiah Garden, JP Nagar, 7th Phase, Bengaluru, Karnataka, India - 560078",
         "is_required": false
-      },
-      {
-        "row_id": "fhr8wasp",
+    },
+    {
+        "row_id": "ybjexbro",
         "field": "customer_vat_id",
         "value": "27HGFDX5678K1Z2",
         "is_required": true
-      },
-      {
-        "row_id": "x7dh6jpr",
+    },
+    {
+        "row_id": "h1bshbvo",
         "field": "description",
-        "value": "Cupcakes with customised logo",
+        "value": "#5DFN-VJUR from Butter Studio",
         "is_required": false
-      },
-      {
-        "row_id": "ytoffgis",
+    },
+    {
+        "row_id": "isg06nuh",
         "field": "currency",
         "value": "SGD",
         "is_required": true
-      },
-      {
-        "row_id": "c5tg1515",
+    },
+    {
+        "row_id": "5pgm3eoj",
         "field": "total_amount_before_vat",
         "value": 265,
         "is_required": true
-      },
-      {
-        "row_id": "fi3ykfoy",
+    },
+    {
+        "row_id": "v7sjkgdi",
         "field": "vat_gst",
         "value": 23.85,
         "is_required": false
-      },
-      {
-        "row_id": "4vaauauv",
+    },
+    {
+        "row_id": "gxt9hodv",
         "field": "total_amount",
         "value": 288.85,
         "is_required": true
-      },
-      {
-        "row_id": "cs1f2j0y",
+    },
+    {
+        "row_id": "nu9aqzw3",
         "field": "wht",
         "value": "",
         "is_required": false
-      },
-      {
-        "row_id": "bvbwoc4g",
+    },
+    {
+        "row_id": "5oovlilz",
         "field": "net_amount_after_wht",
         "value": "",
         "is_required": false
-      },
-      {
-        "row_id": "kub2v7ha",
+    },
+    {
+        "row_id": "gaqz221q",
         "field": "vendor_bank_name",
         "value": "DBS",
         "is_required": false
-      },
-      {
-        "row_id": "bzs5gpyl",
+    },
+    {
+        "row_id": "ydtmp4g8",
         "field": "vendor_bank_account_name",
         "value": "Caterspot Singapore Pte Ltd",
         "is_required": false
-      },
-      {
-        "row_id": "y5mk7xwj",
+    },
+    {
+        "row_id": "bkq2pcss",
         "field": "vendor_bank_account_number",
         "value": "2889035621",
         "is_required": false
-      },
-      {
-        "row_id": "bjjytiq4",
+    },
+    {
+        "row_id": "o5hnywg8",
         "field": "vendor_bank_swift",
         "value": "DBSSSGSG",
         "is_required": false
-      },
-      {
-        "row_id": "hnmhom6d",
+    },
+    {
+        "row_id": "opc78m5x",
         "field": "total_quantity",
         "value": 31,
         "is_required": true
-      }
+    }
     ],
     "line_items": [
-      {
-        "id": 3,
-        "row_id": "wbs9wqrd",
+    {
+        "id": 1,
+        "row_id": "48hewry8",
         "item_description": "Cupcakes with customised logo",
         "item_code": "",
         "unit_of_measurement": "",
@@ -151,15 +151,15 @@
         "unit_price": 7.5,
         "total_price_before_vat": 225,
         "row_bbox": {
-          "x_min": 280,
-          "y_min": 1181,
-          "x_max": 1342,
-          "y_max": 1203
+        "x_min": 280,
+        "y_min": 1181,
+        "x_max": 1342,
+        "y_max": 1203
         }
-      },
-      {
-        "id": 4,
-        "row_id": "yoywchr7",
+    },
+    {
+        "id": 2,
+        "row_id": "f3jzi1dk",
         "item_description": "Delivery",
         "item_code": "",
         "unit_of_measurement": "",
@@ -167,38 +167,38 @@
         "unit_price": 40,
         "total_price_before_vat": 40,
         "row_bbox": {
-          "x_min": 281,
-          "y_min": 1243,
-          "x_max": 370,
-          "y_max": 1265
+        "x_min": 281,
+        "y_min": 1243,
+        "x_max": 370,
+        "y_max": 1265
         }
-      }
+    }
     ]
-  },
-  "bbox_schema": {
+},
+"bbox_schema": {
     "metadata": [
-      {
-        "row_id": "9oyhch1h",
-        "bbox_left": 0.21529411764705883,
-        "bbox_top": 0.4940909090909091,
-        "bbox_width": 0.03705882352941176,
-        "bbox_height": 0.009545454545454546,
+    {
+        "row_id": "e57k1wys",
+        "bbox_left": 0.6717647058823529,
+        "bbox_top": 0.2177272727272727,
+        "bbox_width": 0.04,
+        "bbox_height": 0.008181818181818182,
         "page": 1,
         "field": "po_number",
-        "value_confidence": 0.6153846153846154
-      },
-      {
-        "row_id": "7pozp3gg",
+        "value_confidence": 0.97692307692307692
+    },
+    {
+        "row_id": "4gc9bp1v",
         "bbox_left": 0.6464705882352941,
         "bbox_top": 0.19636363636363635,
-        "bbox_width": 0.04823529411764706,
+        "bbox_width": 0.04764705882352941,
         "bbox_height": 0.008181818181818182,
         "page": 1,
         "field": "invoice_number",
         "value_confidence": 0.948
-      },
-      {
-        "row_id": "ebyq0o5q",
+    },
+    {
+        "row_id": "cvhix0xw",
         "bbox_left": 0.591764705882353,
         "bbox_top": 0.16045454545454546,
         "bbox_width": 0.08176470588235295,
@@ -206,9 +206,9 @@
         "page": 1,
         "field": "invoice_date",
         "value_confidence": 1
-      },
-      {
-        "row_id": "7wp8ft2z",
+    },
+    {
+        "row_id": "llhmngyx",
         "bbox_left": 0,
         "bbox_top": 0,
         "bbox_width": 0,
@@ -216,9 +216,9 @@
         "page": 1,
         "field": "payment_terms",
         "value_confidence": 0
-      },
-      {
-        "row_id": "0bpgdxtz",
+    },
+    {
+        "row_id": "bmhn155k",
         "bbox_left": 0.7,
         "bbox_top": 0.8295454545454546,
         "bbox_width": 0.07882352941176471,
@@ -226,9 +226,9 @@
         "page": 2,
         "field": "due_date",
         "value_confidence": 1
-      },
-      {
-        "row_id": "dv0iw5q2",
+    },
+    {
+        "row_id": "5m3x0h3s",
         "bbox_left": 0.09705882352941177,
         "bbox_top": 0.7981818181818182,
         "bbox_width": 0.2723529411764706,
@@ -236,19 +236,19 @@
         "page": 2,
         "field": "vendor_name",
         "value_confidence": 0.9152542372881356
-      },
-      {
-        "row_id": "zubyfshy",
-        "bbox_left": 0.12470588235294118,
-        "bbox_top": 0.8454545454545455,
-        "bbox_width": 0.2529411764705882,
-        "bbox_height": 0.02909090909090909,
-        "page": 2,
+    },
+    {
+        "row_id": "yxmqmjjx",
+        "bbox_left": 0.7711764705882352,
+        "bbox_top": 0.2109090909090909,
+        "bbox_width": 0.13117647058823528,
+        "bbox_height": 0.045909090909090906,
+        "page": 1,
         "field": "vendor_address",
-        "value_confidence": 0.9809160305343511
-      },
-      {
-        "row_id": "amuv02i9",
+        "value_confidence": 0.97910447761194032
+    },
+    {
+        "row_id": "ye7xkpua",
         "bbox_left": 0.8676470588235294,
         "bbox_top": 0.26272727272727275,
         "bbox_width": 0.08294117647058824,
@@ -256,59 +256,59 @@
         "page": 1,
         "field": "vendor_vat_id",
         "value_confidence": 0.9241979122161865
-      },
-      {
-        "row_id": "quoouaab",
+    },
+    {
+        "row_id": "5xycdf9r",
         "bbox_left": 0.06352941176470588,
         "bbox_top": 0.21454545454545454,
-        "bbox_width": 0.11235294117647059,
-        "bbox_height": 0.013636363636363636,
+        "bbox_width": 0.18941176470588236,
+        "bbox_height": 0.011363636363636364,
         "page": 1,
         "field": "customer_legal_entity",
         "value_confidence": 1
-      },
-      {
-        "row_id": "uqzfjpvs",
-        "bbox_left": 0.06411764705882353,
-        "bbox_top": 0.2686363636363636,
-        "bbox_width": 0.08705882352941176,
-        "bbox_height": 0.015,
+    },
+    {
+        "row_id": "d7b7a0qg",
+        "bbox_left": 0.11176470588235295,
+        "bbox_top": 0.29363636363636364,
+        "bbox_width": 0.0058823529411764705,
+        "bbox_height": 0.0022727272727272726,
         "page": 1,
         "field": "customer_address",
-        "value_confidence": 0.9125874125874126
-      },
-      {
-        "row_id": "fhr8wasp",
-        "bbox_left": 0,
-        "bbox_top": 0,
-        "bbox_width": 0,
-        "bbox_height": 0,
+        "value_confidence": 0.9014598540145985384
+    },
+    {
+        "row_id": "ybjexbro",
+        "bbox_left": 0.12411764705882353,
+        "bbox_top": 0.32272727272727275,
+        "bbox_width": 0.16294117647058823,
+        "bbox_height": 0.010454545454545454,
         "page": 1,
         "field": "customer_vat_id",
-        "value_confidence": 0
-      },
-      {
-        "row_id": "x7dh6jpr",
-        "bbox_left": 0.16470588235294117,
-        "bbox_top": 0.5368181818181819,
-        "bbox_width": 0.20705882352941177,
-        "bbox_height": 0.01,
+        "value_confidence": 0.9799472093582153
+    },
+    {
+        "row_id": "h1bshbvo",
+        "bbox_left": 0.1652941176470588,
+        "bbox_top": 0.4940909090909091,
+        "bbox_width": 0.3376470588235294,
+        "bbox_height": 0.009545454545454546,
         "page": 1,
         "field": "description",
-        "value_confidence": 1
-      },
-      {
-        "row_id": "ytoffgis",
-        "bbox_left": 0.8888235294117647,
-        "bbox_top": 0.36727272727272725,
-        "bbox_width": 0.031176470588235295,
-        "bbox_height": 0.00909090909090909,
+        "value_confidence": 0.97160493827160495
+    },
+    {
+        "row_id": "isg06nuh",
+        "bbox_left": 0.8894117647058823,
+        "bbox_top": 0.36772727272727274,
+        "bbox_width": 0.03058823529411765,
+        "bbox_height": 0.008636363636363636,
         "page": 1,
         "field": "currency",
-        "value_confidence": 0.9912624955177307
-      },
-      {
-        "row_id": "c5tg1515",
+        "value_confidence": 0.9912608861923218
+    },
+    {
+        "row_id": "5pgm3eoj",
         "bbox_left": 0.8764705882352941,
         "bbox_top": 0.5945454545454546,
         "bbox_width": 0.04470588235294118,
@@ -316,9 +316,9 @@
         "page": 1,
         "field": "total_amount_before_vat",
         "value_confidence": 1
-      },
-      {
-        "row_id": "fi3ykfoy",
+    },
+    {
+        "row_id": "v7sjkgdi",
         "bbox_left": 0.8847058823529412,
         "bbox_top": 0.6227272727272727,
         "bbox_width": 0.03588235294117647,
@@ -326,9 +326,9 @@
         "page": 1,
         "field": "vat_gst",
         "value_confidence": 1
-      },
-      {
-        "row_id": "4vaauauv",
+    },
+    {
+        "row_id": "gxt9hodv",
         "bbox_left": 0.8764705882352941,
         "bbox_top": 0.6509090909090909,
         "bbox_width": 0.04470588235294118,
@@ -336,9 +336,9 @@
         "page": 1,
         "field": "total_amount",
         "value_confidence": 1
-      },
-      {
-        "row_id": "cs1f2j0y",
+    },
+    {
+        "row_id": "nu9aqzw3",
         "bbox_left": 0,
         "bbox_top": 0,
         "bbox_width": 0,
@@ -346,9 +346,9 @@
         "page": 1,
         "field": "wht",
         "value_confidence": 0
-      },
-      {
-        "row_id": "bvbwoc4g",
+    },
+    {
+        "row_id": "5oovlilz",
         "bbox_left": 0,
         "bbox_top": 0,
         "bbox_width": 0,
@@ -356,9 +356,9 @@
         "page": 1,
         "field": "net_amount_after_wht",
         "value_confidence": 0
-      },
-      {
-        "row_id": "kub2v7ha",
+    },
+    {
+        "row_id": "gaqz221q",
         "bbox_left": 0.08823529411764706,
         "bbox_top": 0.7922727272727272,
         "bbox_width": 0.029411764705882353,
@@ -366,9 +366,9 @@
         "page": 1,
         "field": "vendor_bank_name",
         "value_confidence": 0.9810429215431213
-      },
-      {
-        "row_id": "bzs5gpyl",
+    },
+    {
+        "row_id": "ydtmp4g8",
         "bbox_left": 0.09705882352941177,
         "bbox_top": 0.7981818181818182,
         "bbox_width": 0.2723529411764706,
@@ -376,9 +376,9 @@
         "page": 2,
         "field": "vendor_bank_account_name",
         "value_confidence": 0.9152542372881356
-      },
-      {
-        "row_id": "y5mk7xwj",
+    },
+    {
+        "row_id": "bkq2pcss",
         "bbox_left": 0.15588235294117647,
         "bbox_top": 0.7786363636363637,
         "bbox_width": 0.08,
@@ -386,9 +386,9 @@
         "page": 1,
         "field": "vendor_bank_account_number",
         "value_confidence": 0.9916189312934875
-      },
-      {
-        "row_id": "bjjytiq4",
+    },
+    {
+        "row_id": "o5hnywg8",
         "bbox_left": 0.12294117647058823,
         "bbox_top": 0.8195454545454546,
         "bbox_width": 0.08058823529411764,
@@ -396,21 +396,21 @@
         "page": 1,
         "field": "vendor_bank_swift",
         "value_confidence": 0.9876342415809631
-      },
-      {
-        "row_id": "hnmhom6d",
+    },
+    {
+        "row_id": "opc78m5x",
         "bbox_left": 0,
         "bbox_top": 0,
         "bbox_width": 0,
         "bbox_height": 0,
         "page": 1,
         "field": "total_quantity",
-        "value_confidence": 0
-      }
+        "value_confidence": 0.90184235646534278
+    }
     ],
     "line_items": [
-      {
-        "row_id": "wbs9wqrd",
+    {
+        "row_id": "48hewry8",
         "bbox_left": 0.16470588235294117,
         "bbox_top": 0.5368181818181819,
         "bbox_width": 0.6247058823529412,
@@ -419,13 +419,13 @@
         "item_description_confidence": 1,
         "item_code_confidence": 0,
         "unit_of_measurement_confidence": 0,
-        "quantity_confidence": 0,
-        "unit_price_confidence": 0.8571428571428572,
-        "total_price_before_vat_confidence": 0,
-        "row_page_confidence": 0
-      },
-      {
-        "row_id": "yoywchr7",
+        "quantity_confidence": 0.90184235646534278,
+        "unit_price_confidence": 0.98571428571428572,
+        "total_price_before_vat_confidence": 0.999999999999999,
+        "row_page_confidence": 0.9857142857142857
+    },
+    {
+        "row_id": "f3jzi1dk",
         "bbox_left": 0.1652941176470588,
         "bbox_top": 0.565,
         "bbox_width": 0.05235294117647059,
@@ -434,11 +434,11 @@
         "item_description_confidence": 1,
         "item_code_confidence": 0,
         "unit_of_measurement_confidence": 0,
-        "quantity_confidence": 0,
-        "unit_price_confidence": 0,
-        "total_price_before_vat_confidence": 0,
-        "row_page_confidence": 0
-      }
+        "quantity_confidence": 1,
+        "unit_price_confidence": 0.99,
+        "total_price_before_vat_confidence": 0.99,
+        "row_page_confidence": 0.9895833333333334
+    }
     ]
-  }
+}
 }
