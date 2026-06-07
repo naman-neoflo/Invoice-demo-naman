@@ -30,12 +30,12 @@
         "display_name": "Vendor VAT ID",
         "type": "string",
         "required": false,
-        "match_status": "mismatch",
+        "match_status": "match",
         "values": {
           "invoice": [
             {
               "document_id": "ADTO0145",
-              "value": "W10-1809-32001501"
+              "value": "33PQRSX5678K1Z5"
             }
           ],
           "po": [
@@ -172,11 +172,11 @@
     ],
     "summary": {
       "total_fields": 7,
-      "matched": 2,
-      "mismatched": 5,
+      "matched": 3,
+      "mismatched": 4,
       "missing_required": 0,
       "missing": 0,
-      "match_percentage": 28.57,
+      "match_percentage": 42.86,
       "document_types": [
         "invoice",
         "po"

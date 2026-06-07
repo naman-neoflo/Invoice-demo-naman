@@ -29,7 +29,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "customer_legal_entity",
@@ -59,7 +59,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "customer_vat_id",
@@ -89,7 +89,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "customer_address",
@@ -119,7 +119,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "currency",
@@ -149,7 +149,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "total_amount_before_vat",
@@ -179,7 +179,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "vat_gst",
@@ -209,7 +209,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "total_amount",
@@ -239,7 +239,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "payment_terms",
@@ -269,7 +269,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "due_date",
@@ -299,7 +299,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       },
       {
         "field_name": "total_quantity",
@@ -329,7 +329,7 @@
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-06-06T15:31:38.856Z"
+        "acknowledged_at": "2026-06-07T12:22:19.853Z"
       }
     ],
     "summary": {

@@ -1,4 +1,3 @@
-
 {
   "matching_method": "ai",
   "match_type": "3-way",
@@ -12,7 +11,7 @@
   "results": [
     {
       "id": 1,
-      "invoice_line_id": "9t6kdgma",
+      "invoice_line_id": "rpatuw7p",
       "match_status": "perfect",
       "result_data": {
         "matched_row_ids": [
@@ -28,17 +27,17 @@
       },
       "matching_method": "ai",
       "matched_by": "ai",
-      "reasoning": "Searched for 'SUBCONTRACT WORK' in merged table and found 1 candidate row (id=1). Called evaluate_match tool with invoice quantity=1 and line_total=280371.54. Tool returned perfect match with row ID [1] as both PO and GRN totals exactly match the invoice line_total (280371.54) with 0% difference and quantity 1 matches exactly on all documents (po_quantity=1, grn_quantity=1). All quantity constraints satisfied: invoice_qty (1) <= po_qty (1) AND invoice_qty (1) <= grn_qty (1). Within ±1.0% threshold.",
-      "created_at": "2026-06-07T11:31:51"
+      "reasoning": "Searched for 'SUBCONTRACT WORK' in merged table and found 1 candidate row. Called evaluate_match tool with candidate row ID 1 and invoice line item (quantity: 1, line_total: 280371.54). Tool returned perfect match with row ID [1]. The PO total (1 × 280371.54 = 280371.54) exactly matches the invoice line_total (280371.54) with 0% difference, and the quantity of 1 matches exactly with both PO and GRN quantities, meeting the strict quantity constraint and within the ±1.0% threshold.",
+      "created_at": "2026-06-07T12:22:48"
     }
   ],
   "ai_metadata": {
-    "total_cost_usd": 0.0441,
-    "total_time_ms": 15418,
-    "wall_clock_time_ms": 18558,
+    "total_cost_usd": 0.0439,
+    "total_time_ms": 16170,
+    "wall_clock_time_ms": 19340,
     "items_processed": 1,
-    "avg_cost_per_item_usd": 0.0441,
-    "avg_time_per_item_ms": 15418,
+    "avg_cost_per_item_usd": 0.0439,
+    "avg_time_per_item_ms": 16170,
     "compaction": {
       "count": 0,
       "total_cost_usd": 0,
@@ -47,8 +46,8 @@
       "avg_time_per_compaction_ms": 0
     },
     "processing_only": {
-      "cost_usd": 0.0441,
-      "time_ms": 15418
+      "cost_usd": 0.0439,
+      "time_ms": 16170
     }
   },
   "system_metadata": null,
