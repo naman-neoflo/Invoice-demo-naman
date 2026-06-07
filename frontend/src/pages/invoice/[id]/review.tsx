@@ -728,9 +728,9 @@ function ReviewPage() {
             )}
 
             {activeTab === "line_items" && (
-              <div className="overflow-x-auto">
-                <div style={{ border: "1px solid #E6E6E6", borderRadius: 8, overflow: "hidden", background: "#ffffff" }}>
-                  <table className="w-full text-sm" style={{ borderCollapse: "collapse", tableLayout: "fixed" }}>
+              <div style={{ border: "1px solid #E6E6E6", borderRadius: 8, overflow: "hidden", background: "#ffffff" }}>
+                <div className="overflow-x-auto">
+                  <table className="text-sm" style={{ borderCollapse: "collapse", tableLayout: "auto", width: "100%", minWidth: 700 }}>
                     <thead className="sticky top-0 z-10">
                       <tr>
                       {[
@@ -848,6 +848,11 @@ function ReviewPage() {
                                   textAlign: c.align ?? "left",
                                   color: "#414651",
                                   background: s.bg,
+                                  // Ensure the description column doesn't collapse on narrow
+                                  // viewports — give it a sensible minimum width so the
+                                  // table can be scrolled horizontally instead of hiding
+                                  // the cell content.
+                                  minWidth: c.field === "item_description" ? 200 : undefined,
                                   whiteSpace: c.isNum ? "nowrap" : (c.field === "item_description" ? "normal" : "nowrap"),
                                   wordBreak: c.field === "item_description" ? "break-word" : undefined,
                                   fontVariantNumeric: c.isNum ? "tabular-nums" : undefined,

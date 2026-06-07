@@ -1,0 +1,55 @@
+[
+  {
+    "matching_method": "ai",
+    "match_type": "3-way",
+    "base_document": "invoice",
+    "summary": {
+      "total_items": 1,
+      "perfect_matches": 0,
+      "probable_matches": 0,
+      "no_matches": 1
+    },
+    "results": [
+      {
+        "id": 1,
+        "invoice_line_id": "e7kxp7op",
+        "match_status": "no_match",
+        "result_data": {
+          "po": [],
+          "grn": [],
+          "confidence": 0
+        },
+        "matching_method": null,
+        "matched_by": null,
+        "reasoning": "Searched for 'SUBCONTRACT WORK' in merged table and found 1 candidate row (ID: 1) with exact description match. The candidate has PO quantity=1, GRN quantity=1, and price=280371.54, which exactly matches the invoice line_total (280371.54). However, the invoice line item is MISSING the quantity value (empty string), which prevents proper 3-way matching evaluation. Without a quantity value, the evaluate_match tool cannot verify quantity constraints or confirm unit price matching. To properly match this item, the quantity field needs to be populated in the invoice extraction.",
+        "created_at": "2026-06-06T15:34:35"
+      }
+    ],
+    "ai_metadata": {
+      "total_cost_usd": 0.0507,
+      "total_time_ms": 21365,
+      "wall_clock_time_ms": 24690,
+      "items_processed": 1,
+      "avg_cost_per_item_usd": 0.0507,
+      "avg_time_per_item_ms": 21365,
+      "compaction": {
+        "count": 0,
+        "total_cost_usd": 0,
+        "total_time_ms": 0,
+        "avg_cost_per_compaction_usd": 0,
+        "avg_time_per_compaction_ms": 0
+      },
+      "processing_only": {
+        "cost_usd": 0.0507,
+        "time_ms": 21365
+      }
+    },
+    "system_metadata": null,
+    "compaction_mode": "batch",
+    "batch_size": 10,
+    "po_numbers": [
+      "PO-00068"
+    ],
+    "error": null
+  }
+]

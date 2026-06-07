@@ -222,10 +222,11 @@ function LeftPanel({
 
       {/* Table: header + rows + total — fills remaining height, rows scroll */}
       <div style={{ margin: "12px", border: "1px solid #E5E7EB", borderRadius: 8, overflow: "hidden", flex: 1, display: "flex", flexDirection: "column" }}>
-        <div style={{ flex: 1, overflowY: "auto" }}>
+        <div style={{ flex: 1, overflowX: "auto", display: "flex", flexDirection: "column" }}>
+        <div style={{ flex: 1, overflowY: "auto", minWidth: 420 }}>
           {/* Sticky column header */}
           <div style={{
-            display: "grid", gridTemplateColumns: "3px 28px 32px 1fr 60px 72px 100px",
+            display: "grid", gridTemplateColumns: "3px 28px 32px minmax(80px, 1fr) 60px 100px 110px",
             alignItems: "stretch", fontSize: 11, fontWeight: 600, color: "#6B7280",
             background: "#F9FAFB", borderBottom: "1px solid #E5E7EB",
             position: "sticky", top: 0, zIndex: 1,
@@ -250,7 +251,7 @@ function LeftPanel({
                 key={item.id}
                 onClick={() => onSelectItem(realIdx)}
                 style={{
-                  display: "grid", gridTemplateColumns: "3px 28px 32px 1fr 60px 72px 100px",
+                  display: "grid", gridTemplateColumns: "3px 28px 32px minmax(80px, 1fr) 60px 100px 110px",
                   alignItems: "stretch",
                   borderBottom: "1px solid #F0F0F0",
                   background: isActive ? "#F0F6FF" : "#fff",
@@ -294,7 +295,7 @@ function LeftPanel({
 
           {/* Sticky total row */}
           <div style={{
-            display: "grid", gridTemplateColumns: "3px 28px 32px 1fr 60px 72px 100px",
+            display: "grid", gridTemplateColumns: "3px 28px 32px minmax(80px, 1fr) 60px 100px 110px",
             alignItems: "stretch",
             borderTop: "1px solid #E5E7EB", background: "#F9FAFB",
             position: "sticky", bottom: 0,
@@ -313,6 +314,7 @@ function LeftPanel({
               {fmt(invoiceTotalAmt, currency)}
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -385,8 +387,8 @@ function RightPanel({
 
   // Grid template
   const cols = showPoCol
-    ? "44px 100px 100px 1fr 80px 80px 100px 110px"
-    : "44px 100px 1fr 80px 80px 100px 110px";
+    ? "44px 100px 100px minmax(80px, 1fr) 80px 110px 110px 110px"
+    : "44px 100px minmax(80px, 1fr) 80px 110px 110px 110px";
 
   return (
     <div className="flex-1 flex flex-col" style={{ minWidth: 0 }}>
@@ -436,7 +438,8 @@ function RightPanel({
             No GRN candidates found for this line item.
           </div>
         ) : (
-          <div style={{ flex: 1, overflowY: "auto" }}>
+          <div style={{ flex: 1, overflowX: "auto", display: "flex", flexDirection: "column" }}>
+          <div style={{ flex: 1, overflowY: "auto", minWidth: 600 }}>
             {/* Sticky column header */}
             <div style={{
               display: "grid", gridTemplateColumns: cols, alignItems: "stretch",
@@ -530,6 +533,7 @@ function RightPanel({
                 <div style={{ display: "flex", alignItems: "center", padding: "8px 10px" }} />
               </div>
             )}
+          </div>
           </div>
         )}
       </div>

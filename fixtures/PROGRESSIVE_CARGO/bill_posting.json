@@ -1,0 +1,31 @@
+{
+  "bill_header": {
+    "vendor_id": "vendor_progcargo_01",
+    "vendor_name": "PROGRESSIVE CARGO & SERVICES SDN BHD",
+    "bill_number": "BILL-0000068",
+    "bill_date": "2025-10-31",
+    "due_date": "2025-12-15",
+    "reference": "PO-00068",
+    "currency": "MYR",
+    "subtotal": 280371.54,
+    "tax_amount": 22429.72,
+    "total": 302801.26,
+    "wht": null,
+    "net_amount_after_wht": 302801.26
+  },
+  "line_items": [
+    {
+      "id": "bl_1",
+      "invoice_line_id": "e7kxp7op",
+      "description": "SUBCONTRACT WORK",
+      "account_code": "5010",
+      "account_name": "Subcontract Costs",
+      "quantity": 1,
+      "unit_price": 280371.54,
+      "tax_type": "SST 8%",
+      "vat_tax_code": "TX",
+      "wht_tax_code": null,
+      "total": 280371.54
+    }
+  ]
+}

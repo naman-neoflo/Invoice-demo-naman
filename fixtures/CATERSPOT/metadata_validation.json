@@ -10,26 +10,26 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": "PO-00060"
+              "document_id": "INV-SG-202603-a7888",
+              "value": "PO-00069"
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": "PO-00060"
+              "document_id": "PO-00069",
+              "value": "PO-00069"
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
-              "value": "PO-00060"
+              "document_id": "PR-00065",
+              "value": "PO-00069"
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.608Z"
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "customer_legal_entity",
@@ -40,26 +40,26 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": "NEOFLO PTE LTD"
+              "document_id": "INV-SG-202603-a7888",
+              "value": "Neoflo Tech PTE LTD"
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": "NEOFLO PTE LTD"
+              "document_id": "PO-00069",
+              "value": "Neoflo Tech PTE LTD"
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
-              "value": "NEOFLO PTE LTD"
+              "document_id": "PR-00065",
+              "value": "Neoflo Tech PTE LTD"
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.608Z"
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "customer_vat_id",
@@ -70,26 +70,26 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": "32ABCDE1234F1Z5"
+              "document_id": "INV-SG-202603-a7888",
+              "value": "27HGFDX5678K1Z2"
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": "32ABCDE1234F1Z5"
+              "document_id": "PO-00069",
+              "value": "27HGFDX5678K1Z2"
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
+              "document_id": "PR-00065",
               "value": null
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.608Z"
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "customer_address",
@@ -100,26 +100,26 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": "35/38, 24th Main Road, Opposite Brigade Palms, Achappa Layout, Ramaiah Garden, JP Nagar, 7th Phase, Bengaluru, Karnataka 560078"
+              "document_id": "INV-SG-202603-a7888",
+              "value": "35/38, 24th Main Road, Opposite Brigade Palms, Achappa Layout, Ramaiah Garden, JP Nagar, 7th Phase Bengaluru, Karnataka India - 560078"
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
+              "document_id": "PO-00069",
               "value": "35/38, 24th Main Road, Opposite Brigade Palms, Achappa Layout, Ramaiah Garden, JP Nagar, 7th Phase, Bengaluru, Karnataka, 560078, India"
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
+              "document_id": "PR-00065",
               "value": "35/38, 24th Main Road, Opposite Brigade Palms, Achappa Layout, Ramaiah Garden, JP Nagar, 7th Phase, Bengaluru, Karnataka, 560078, India"
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.608Z"
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "currency",
@@ -130,26 +130,26 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": "PHP"
+              "document_id": "INV-SG-202603-a7888",
+              "value": "SGD"
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": "PHP"
+              "document_id": "PO-00069",
+              "value": "SGD"
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
+              "document_id": "PR-00065",
               "value": null
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.608Z"
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "total_amount_before_vat",
@@ -160,26 +160,26 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": 701143.5
+              "document_id": "INV-SG-202603-a7888",
+              "value": 265
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": 701143.5
+              "document_id": "PO-00069",
+              "value": 265
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
+              "document_id": "PR-00065",
               "value": null
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.608Z"
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "vat_gst",
@@ -190,26 +190,26 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": 84137.22
+              "document_id": "INV-SG-202603-a7888",
+              "value": 23.85
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": 84137.22
+              "document_id": "PO-00069",
+              "value": 23.85
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
+              "document_id": "PR-00065",
               "value": null
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.608Z"
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "total_amount",
@@ -220,86 +220,86 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": 785280.72
+              "document_id": "INV-SG-202603-a7888",
+              "value": 288.85
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": 785280.72
+              "document_id": "PO-00069",
+              "value": 288.85
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
+              "document_id": "PR-00065",
               "value": null
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.609Z"
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "payment_terms",
         "display_name": "Payment Terms",
         "type": "string",
         "required": false,
-        "match_status": "mismatch",
+        "match_status": "match",
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": null
+              "document_id": "INV-SG-202603-a7888",
+              "value": "30"
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": "180"
+              "document_id": "PO-00069",
+              "value": "30"
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
+              "document_id": "PR-00065",
               "value": null
             }
           ]
         },
-        "is_acknowledged": false,
-        "acknowledged_by": null,
-        "acknowledged_at": null
+        "is_acknowledged": true,
+        "acknowledged_by": "system",
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "due_date",
         "display_name": "Due Date",
         "type": "date",
         "required": false,
-        "match_status": "mismatch",
+        "match_status": "match",
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": null
+              "document_id": "INV-SG-202603-a7888",
+              "value": "2026-04-16"
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": "2026-05-23"
+              "document_id": "PO-00069",
+              "value": "2026-04-04"
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
+              "document_id": "PR-00065",
               "value": null
             }
           ]
         },
-        "is_acknowledged": false,
-        "acknowledged_by": null,
-        "acknowledged_at": null
+        "is_acknowledged": true,
+        "acknowledged_by": "system",
+        "acknowledged_at": "2026-06-07T08:04:53.788Z"
       },
       {
         "field_name": "total_quantity",
@@ -310,36 +310,36 @@
         "values": {
           "invoice": [
             {
-              "document_id": "0000047",
-              "value": 1
+              "document_id": "INV-SG-202603-a7888",
+              "value": 31
             }
           ],
           "po": [
             {
-              "document_id": "PO-00060",
-              "value": 1
+              "document_id": "PO-00069",
+              "value": 31
             }
           ],
           "grn": [
             {
-              "document_id": "PR-00059",
-              "value": 1
+              "document_id": "PR-00065",
+              "value": 31
             }
           ]
         },
         "is_acknowledged": true,
         "acknowledged_by": "system",
-        "acknowledged_at": "2026-05-12T08:14:10.609Z"
+        "acknowledged_at": "2026-06-07T08:04:53.789Z"
       }
     ],
     "summary": {
       "total_fields": 11,
-      "matched": 9,
-      "mismatched": 2,
+      "matched": 11,
+      "mismatched": 0,
       "missing_required": 0,
       "missing": 0,
-      "match_percentage": 81.82,
-      "validation_result": "fail",
+      "match_percentage": 100,
+      "validation_result": "pass",
       "document_types": [
         "invoice",
         "po",
