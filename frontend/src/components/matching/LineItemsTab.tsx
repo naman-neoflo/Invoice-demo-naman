@@ -612,10 +612,9 @@ function ManualSelectionDrawer({
 
   return (
     <div style={{
-      position: "absolute", bottom: 0, left: 0, right: 0,
       background: "#fff", borderTop: "1px solid #E5E7EB",
       boxShadow: "0 -4px 16px rgba(0,0,0,0.08)",
-      padding: "16px 24px", zIndex: 20,
+      padding: "16px 24px", flexShrink: 0,
     }}>
       <div style={{ fontSize: 14, fontWeight: 700, color: "#101828", marginBottom: 12 }}>
         Manual Selection ({selectedGrnCandidates.length})
@@ -874,7 +873,6 @@ export function LineItemsTab({
     <div className="h-full flex flex-col" style={{ position: "relative" }}>
       <div
         className="flex-1 flex overflow-hidden"
-        style={{ paddingBottom: showDrawer ? 140 : 0 }}
       >
         <LeftPanel
           items={perItem}
