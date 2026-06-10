@@ -119,8 +119,8 @@ def _resolve_bill_line_items(
             # Fixture-level SAP tax codes; wht_tax_code falls back to the rate-
             # inferred code so the dropdown is pre-selected even for invoices that
             # lack an explicit code in their bill_posting fixture.
-            "vat_tax_code": src.get("vat_tax_code"),
-            "wht_tax_code": src.get("wht_tax_code") or _inferred_wht,
+            "vat_tax_code": src.get("vat_tax_code") or primary.get("vat_tax_code"),
+            "wht_tax_code": src.get("wht_tax_code") or primary.get("wht_tax_code") or _inferred_wht,
         }
         item.update(overrides.get(item_id, {}))
         items.append(item)
@@ -356,6 +356,40 @@ def _build_simulate_document(run_id, header: dict, line_items: list[dict]):
             f"Simulation failed — the document is not balanced "
             f"(difference {balance:,.2f} {currency})."
         )
+
+    # Per-invoice VAT code enforcement.
+    required_vat_code = header.get("required_vat_code")
+    if required_vat_code and status == "success":
+        invalid_codes = [
+            it.get("vat_tax_code")
+            for it in line_items
+            if it.get("vat_tax_code") and it.get("vat_tax_code") != required_vat_code
+        ]
+        if invalid_codes:
+            status = "error"
+            vat_label = f"{required_vat_code}: VAT STANDARD 12%" if required_vat_code == "VS" else required_vat_code
+            message = (
+                f"Simulation failed — invalid VAT/GST Tax Code '{invalid_codes[0]}' on line item. "
+                f"This invoice requires '{vat_label}'."
+            )
+
+    # Per-invoice WHT code enforcement.
+    required_wht_code = header.get("required_wht_code")
+    if required_wht_code and status == "success":
+        invalid_wht = [
+            it.get("wht_tax_code")
+            for it in line_items
+            if it.get("wht_tax_code") and it.get("wht_tax_code") != required_wht_code
+        ]
+        if invalid_wht:
+            status = "error"
+            wht_pct = _WHT_CODE_TO_PCT.get(required_wht_code, "")
+            wht_label = f"{required_wht_code} · TECHNICAL/MGMT/CONSULTING SERV. {wht_pct}" if wht_pct else required_wht_code
+            message = (
+                f"Simulation failed — invalid WHT Tax Code '{invalid_wht[0]}' on line item. "
+                f"This invoice requires '{wht_label}'."
+            )
+
     return status, message, document
 
 
@@ -506,6 +540,46 @@ async def post_bill_to_erp(invoice_id: str, current_user: CurrentUser):
     line_items = _resolve_bill_line_items(invoice_schema, bp_fixture, overrides)
 
     header = bp_fixture.get("bill_header", {})
+
+    # Enforce required VAT code before posting.
+    required_vat_code = header.get("required_vat_code")
+    if required_vat_code:
+        invalid = [
+            it.get("vat_tax_code")
+            for it in line_items
+            if it.get("vat_tax_code") and it.get("vat_tax_code") != required_vat_code
+        ]
+        if invalid:
+            vat_label = f"{required_vat_code}: VAT STANDARD 12%" if required_vat_code == "VS" else required_vat_code
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    f"Bill posting failed — invalid VAT/GST Tax Code '{invalid[0]}' selected. "
+                    f"This invoice requires '{vat_label}'. "
+                    f"Please correct the VAT/GST Tax Code and try again."
+                ),
+            )
+
+    # Enforce required WHT code before posting.
+    required_wht_code = header.get("required_wht_code")
+    if required_wht_code:
+        invalid_wht = [
+            it.get("wht_tax_code")
+            for it in line_items
+            if it.get("wht_tax_code") and it.get("wht_tax_code") != required_wht_code
+        ]
+        if invalid_wht:
+            wht_label = _WHT_CODE_TO_PCT.get(required_wht_code, "")
+            required_label = f"{required_wht_code} · TECHNICAL/MGMT/CONSULTING SERV. {wht_label}" if wht_label else required_wht_code
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    f"Bill posting failed — invalid WHT Tax Code '{invalid_wht[0]}' selected. "
+                    f"This invoice requires '{required_label}'. "
+                    f"Please correct the WHT Tax Code and try again."
+                ),
+            )
+
     vendor_name = _extract_field(invoice_schema, "vendor_name") or header.get("vendor_name", "")
     bill_number = header.get("bill_number", "")
     bill_date = saved.get("invoice_date") or _extract_field(invoice_schema, "invoice_date") or header.get("bill_date", "")
@@ -522,6 +596,8 @@ async def post_bill_to_erp(invoice_id: str, current_user: CurrentUser):
             due_date=due_date,
             reference_number=reference,
             currency_code=currency,
+            tax_amount=float(header.get("tax_amount") or 0),
+            wht_amount=float(header.get("wht") or 0),
             line_items=[
                 {
                     "description": li.get("description", ""),
