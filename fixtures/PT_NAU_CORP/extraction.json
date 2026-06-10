@@ -1,0 +1,446 @@
+[
+  {
+    "invoice_schema": {
+      "metadata": [
+        {
+          "row_id": "lv8nuibi",
+          "field": "po_number",
+          "value": "PO-00067",
+          "is_required": true
+        },
+        {
+          "row_id": "8t8wei7v",
+          "field": "invoice_number",
+          "value": "NCI/2025/02/001",
+          "is_required": true
+        },
+        {
+          "row_id": "idpf9kdv",
+          "field": "invoice_date",
+          "value": "2026-06-08",
+          "is_required": true
+        },
+        {
+          "row_id": "i1nrvgwn",
+          "field": "payment_terms",
+          "value": "60",
+          "is_required": false
+        },
+        {
+          "row_id": "q9ibtkik",
+          "field": "due_date",
+          "value": "",
+          "is_required": false
+        },
+        {
+          "row_id": "goburzzt",
+          "field": "vendor_name",
+          "value": "PT Nau Corp Indonesia",
+          "is_required": true
+        },
+        {
+          "row_id": "p0jd8n8w",
+          "field": "vendor_address",
+          "value": "Ruko Cluster Nirwana Taman Harapan Baru Blok W1 No. 2, Pejuang, Medan Satria, Bekasi, Jawa Barat",
+          "is_required": false
+        },
+        {
+          "row_id": "avbvq56j",
+          "field": "vendor_vat_id",
+          "value": "22ABCDE1234F1Z9",
+          "is_required": false
+        },
+        {
+          "row_id": "h85mel5x",
+          "field": "customer_legal_entity",
+          "value": "Neoflo Tech PTE LTD",
+          "is_required": false
+        },
+        {
+          "row_id": "ysjl89ly",
+          "field": "customer_address",
+          "value": "35/38, 24th Main Road, Opposite Brigade Palms, Achappa Layout, Ramaiah Garden, JP Nagar, 7th Phase, Bengaluru, Karnataka, India - 560078",
+          "is_required": false
+        },
+        {
+          "row_id": "zu0iqolx",
+          "field": "customer_vat_id",
+          "value": "0032235764015000",
+          "is_required": true
+        },
+        {
+          "row_id": "5nyskivx",
+          "field": "description",
+          "value": "White Plastic Sack Uk. 120x150",
+          "is_required": false
+        },
+        {
+          "row_id": "bdcf983i",
+          "field": "currency",
+          "value": "IDR",
+          "is_required": true
+        },
+        {
+          "row_id": "iqgrheyz",
+          "field": "total_amount_before_vat",
+          "value": 9100000,
+          "is_required": true
+        },
+        {
+          "row_id": "xt7m9fpz",
+          "field": "vat_gst",
+          "value": 1001000,
+          "is_required": false
+        },
+        {
+          "row_id": "2ajibzdm",
+          "field": "total_amount",
+          "value": 10101000,
+          "is_required": true
+        },
+        {
+          "row_id": "e4l2befp",
+          "field": "wht",
+          "value": "",
+          "is_required": false
+        },
+        {
+          "row_id": "72lbssu9",
+          "field": "net_amount_after_wht",
+          "value": "",
+          "is_required": false
+        },
+        {
+          "row_id": "w7phpuum",
+          "field": "vendor_bank_name",
+          "value": "BCA IDR",
+          "is_required": false
+        },
+        {
+          "row_id": "82od2r8b",
+          "field": "vendor_bank_account_name",
+          "value": "PT Nau Corp Indonesia",
+          "is_required": false
+        },
+        {
+          "row_id": "a59f899c",
+          "field": "vendor_bank_account_number",
+          "value": "519-5053356",
+          "is_required": false
+        },
+        {
+          "row_id": "45624m11",
+          "field": "vendor_bank_swift",
+          "value": "",
+          "is_required": false
+        },
+        {
+          "row_id": "i7455zaz",
+          "field": "total_quantity",
+          "value": 1300,
+          "is_required": true
+        }
+      ],
+      "line_items": [
+        {
+          "id": 1,
+          "row_id": "qwz8m0oc",
+          "item_description": "White Plastic Sack Uk. 120x150",
+          "item_code": "01.705",
+          "unit_of_measurement": "Piece",
+          "quantity": 1000,
+          "unit_price": 7000,
+          "total_price_before_vat": 7000000,
+          "row_bbox": {
+            "x_min": 55,
+            "y_min": 378,
+            "x_max": 1585,
+            "y_max": 433
+          }
+        },
+        {
+          "id": 2,
+          "row_id": "65f1gwos",
+          "item_description": "Tape Cloth Yellow",
+          "item_code": "01.704",
+          "unit_of_measurement": "Piece",
+          "quantity": 300,
+          "unit_price": 7000,
+          "total_price_before_vat": 2100000,
+          "row_bbox": {
+            "x_min": 54,
+            "y_min": 378,
+            "x_max": 1585,
+            "y_max": 440
+          }
+        }
+      ]
+    },
+    "bbox_schema": {
+      "metadata": [
+        {
+          "row_id": "lv8nuibi",
+          "bbox_left": 0.8699334543254689,
+          "bbox_top": 0.08465156049593843,
+          "bbox_width": 0.05021173623714459,
+          "bbox_height": 0.008550662676357419,
+          "page": 1,
+          "field": "po_number",
+          "value_confidence": 0.97692307692307692
+        },
+        {
+          "row_id": "8t8wei7v",
+          "bbox_left": 0.8499697519661222,
+          "bbox_top": 0.06541256947413425,
+          "bbox_width": 0.029643073200241985,
+          "bbox_height": 0.00897819581017529,
+          "page": 1,
+          "field": "invoice_number",
+          "value_confidence": 0.942105263157894735
+        },
+        {
+          "row_id": "idpf9kdv",
+          "bbox_left": 0.6690865093768905,
+          "bbox_top": 0.06241983753740915,
+          "bbox_width": 0.10042347247428918,
+          "bbox_height": 0.008550662676357419,
+          "page": 1,
+          "field": "invoice_date",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "i1nrvgwn",
+          "bbox_left": 0.6787658802177858,
+          "bbox_top": 0.08978195810175288,
+          "bbox_width": 0.0205686630369026,
+          "bbox_height": 0.008123129542539546,
+          "page": 1,
+          "field": "payment_terms",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "q9ibtkik",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "due_date",
+          "value_confidence": 0
+        },
+        {
+          "row_id": "goburzzt",
+          "bbox_left": 0.17301875378100423,
+          "bbox_top": 0.017101325352714837,
+          "bbox_width": 0.1560798548094374,
+          "bbox_height": 0.010688328345446772,
+          "page": 1,
+          "field": "vendor_name",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "p0jd8n8w",
+          "bbox_left": 0.07194679564691657,
+          "bbox_top": 0.26336041043180847,
+          "bbox_width": 0.8476420798065296,
+          "bbox_height": 0.02394185549380077,
+          "page": 2,
+          "field": "vendor_address",
+          "value_confidence": 0.9811965811965812
+        },
+        {
+          "row_id": "avbvq56j",
+          "bbox_left": 0.12273276904474002,
+          "bbox_top": 0.29157759726378796,
+          "bbox_width": 0.15114873035066506,
+          "bbox_height": 0.008550662676357419,
+          "page": 2,
+          "field": "vendor_vat_id",
+          "value_confidence": 0.9856085777282715
+        },
+        {
+          "row_id": "h85mel5x",
+          "bbox_left": 0.11433756805807622,
+          "bbox_top": 0.07823856348867037,
+          "bbox_width": 0.09739866908650938,
+          "bbox_height": 0.006412997007268063,
+          "page": 1,
+          "field": "customer_legal_entity",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "ysjl89ly",
+          "bbox_left": 0.07194679564691657,
+          "bbox_top": 0.36639589568191533,
+          "bbox_width": 0.8077388149939541,
+          "bbox_height": 0.010260795211628902,
+          "page": 2,
+          "field": "customer_address",
+          "value_confidence": 0.9436619718309859
+        },
+        {
+          "row_id": "zu0iqolx",
+          "bbox_left": 0.13724304715840388,
+          "bbox_top": 0.3946130825138948,
+          "bbox_width": 0.14933494558645707,
+          "bbox_height": 0.008550662676357419,
+          "page": 2,
+          "field": "customer_vat_id",
+          "value_confidence": 0.9887064099311829
+        },
+        {
+          "row_id": "5nyskivx",
+          "bbox_left": 0.15668481548699334,
+          "bbox_top": 0.1616075245831552,
+          "bbox_width": 0.18330308529945555,
+          "bbox_height": 0.0235143223599829,
+          "page": 1,
+          "field": "description",
+          "value_confidence": 0.9759493670886076
+        },
+        {
+          "row_id": "bdcf983i",
+          "bbox_left": 0.1482153660012099,
+          "bbox_top": 0.8324070115433946,
+          "bbox_width": 0.022988505747126436,
+          "bbox_height": 0.006412997007268063,
+          "page": 1,
+          "field": "currency",
+          "value_confidence": 0.989615797996521
+        },
+        {
+          "row_id": "iqgrheyz",
+          "bbox_left": 0.8868723532970357,
+          "bbox_top": 0.702009405728944,
+          "bbox_width": 0.06654567453115548,
+          "bbox_height": 0.00897819581017529,
+          "page": 1,
+          "field": "total_amount_before_vat",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "xt7m9fpz",
+          "bbox_left": 0.8868723532970357,
+          "bbox_top": 0.7725523728088927,
+          "bbox_width": 0.06594071385359952,
+          "bbox_height": 0.008123129542539546,
+          "page": 1,
+          "field": "vat_gst",
+          "value_confidence": 0.9917242527008057
+        },
+        {
+          "row_id": "2ajibzdm",
+          "bbox_left": 0.867513611615245,
+          "bbox_top": 0.7943565626336041,
+          "bbox_width": 0.0852994555353902,
+          "bbox_height": 0.008123129542539546,
+          "page": 1,
+          "field": "total_amount",
+          "value_confidence": 0.990187406539917
+        },
+        {
+          "row_id": "e4l2befp",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "wht",
+          "value_confidence": 0
+        },
+        {
+          "row_id": "72lbssu9",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "net_amount_after_wht",
+          "value_confidence": 0
+        },
+        {
+          "row_id": "w7phpuum",
+          "bbox_left": 0.02117362371445856,
+          "bbox_top": 0.8306968790081232,
+          "bbox_width": 0.17422867513611615,
+          "bbox_height": 0.021376656690893545,
+          "page": 1,
+          "field": "vendor_bank_name",
+          "value_confidence": 0.96415094339622647
+        },
+        {
+          "row_id": "82od2r8b",
+          "bbox_left": 0.17301875378100423,
+          "bbox_top": 0.017101325352714837,
+          "bbox_width": 0.1560798548094374,
+          "bbox_height": 0.010688328345446772,
+          "page": 1,
+          "field": "vendor_bank_account_name",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "a59f899c",
+          "bbox_left": 0.11433756805807622,
+          "bbox_top": 0.8426678067550235,
+          "bbox_width": 0.08106473079249849,
+          "bbox_height": 0.00897819581017529,
+          "page": 1,
+          "field": "vendor_bank_account_number",
+          "value_confidence": 0.9871774315834045
+        },
+        {
+          "row_id": "45624m11",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "vendor_bank_swift",
+          "value_confidence": 0
+        },
+        {
+          "row_id": "i7455zaz",
+          "bbox_left": 0.64670296430732,
+          "bbox_top": 0.17956391620350576,
+          "bbox_width": 0.021778584392014518,
+          "bbox_height": 0.006412997007268063,
+          "page": 1,
+          "field": "total_quantity",
+          "value_confidence": 0.98888888888888888
+        }
+      ],
+      "line_items": [
+        {
+          "row_id": "qwz8m0oc",
+          "bbox_left": 0.03327283726557774,
+          "bbox_top": 0.1616075245831552,
+          "bbox_width": 0.925589836660617,
+          "bbox_height": 0.0235143223599829,
+          "page": 1,
+          "item_description_confidence": 0.9759493670886076,
+          "item_code_confidence": 0.9904007315635681,
+          "unit_of_measurement_confidence": 0.96,
+          "quantity_confidence": 0.98888888888888888,
+          "unit_price_confidence": 0.98888888888888888,
+          "total_price_before_vat_confidence": 0.9875,
+          "row_page_confidence": 0.9759493670886076
+        },
+        {
+          "row_id": "65f1gwos",
+          "bbox_left": 0.032667876588021776,
+          "bbox_top": 0.1616075245831552,
+          "bbox_width": 0.926194797338173,
+          "bbox_height": 0.026507054296707994,
+          "page": 1,
+          "item_description_confidence": 0.9759493670886076,
+          "item_code_confidence": 0.9899664521217346,
+          "unit_of_measurement_confidence": 0.96,
+          "quantity_confidence": 0.9897775053977966,
+          "unit_price_confidence": 0.98888888888888888,
+          "total_price_before_vat_confidence": 0.9875,
+          "row_page_confidence": 0.9759493670886076
+        }
+      ]
+    }
+  }
+]

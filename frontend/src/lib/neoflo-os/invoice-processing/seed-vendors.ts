@@ -771,6 +771,27 @@ export const SEED_VENDORS: Vendor[] = [
       typicalAmountRange: { min: 12_000, max: 32_000 },
     },
   },
+
+  // ── Indonesia vendor (Faktur Pajak hero) ──────────────────────────────
+  {
+    id: "vendor-pt-nau-corp-001",
+    name: "PT NAU CORP",
+    domain: "naucorp.co.id",
+    primaryContactName: "Budi Santoso",
+    primaryContactEmail: "finance@naucorp.co.id",
+    jurisdiction: "ID",
+    taxRegistration: {
+      type: "VAT",
+      id: "01.234.567.8-901.000",
+      validatedAt: "2026-05-15T03:28:00Z",
+      validatedSource: "DJP Coretax registry",
+    },
+    paymentTermsDays: 30,
+    behavior: {
+      averageInvoicesPerMonth: 2,
+      typicalAmountRange: { min: 40_000_000, max: 60_000_000 },
+    },
+  },
 ]
 
 const VENDOR_INDEX: Map<VendorId, Vendor> = new Map(

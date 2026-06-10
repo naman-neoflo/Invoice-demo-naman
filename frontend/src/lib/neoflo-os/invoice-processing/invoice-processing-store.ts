@@ -57,6 +57,10 @@ export type InvoiceProcessingState = {
   inboxSortKey: "receivedAt" | "amount" | "vendorName" | null
   inboxSortDir: "asc" | "desc"
 
+  // Faktur Pajak per-invoice state (IDR invoices only)
+  fakturPajakEdits: Record<string, Record<string, string>>          // invoiceId → fieldName → newValue
+  fakturPajakAcknowledgements: Record<string, string[]>             // invoiceId → acknowledged fieldNames
+
   // actions
   approveInvoice: (invoiceId: string) => void
   editGLCoding: (
@@ -80,6 +84,9 @@ export type InvoiceProcessingState = {
   setInboxSort: (key: InvoiceProcessingState["inboxSortKey"], dir: "asc" | "desc") => void
   clearInboxAdvancedFilters: () => void
 
+  editFakturPajakField: (invoiceId: string, fieldName: string, value: string) => void
+  acknowledgeFakturPajakField: (invoiceId: string, fieldName: string) => void
+
   reset: () => void
 }
 
@@ -87,6 +94,8 @@ const initialState = {
   applications: {} as InvoiceProcessingState["applications"],
   exceptionReviews: {} as InvoiceProcessingState["exceptionReviews"],
   earlyPayBatchApproved: false,
+  fakturPajakEdits: {} as InvoiceProcessingState["fakturPajakEdits"],
+  fakturPajakAcknowledgements: {} as InvoiceProcessingState["fakturPajakAcknowledgements"],
   inboxFilter: "all" as InboxFilter,
   inboxSearch: "",
   inboxDateFrom: null as string | null,
@@ -188,6 +197,26 @@ export const useInvoiceProcessingStore = create<InvoiceProcessingState>()(
           inboxVendorIds: [],
         }),
 
+      editFakturPajakField: (invoiceId, fieldName, value) =>
+        set((s) => ({
+          fakturPajakEdits: {
+            ...s.fakturPajakEdits,
+            [invoiceId]: { ...(s.fakturPajakEdits[invoiceId] ?? {}), [fieldName]: value },
+          },
+        })),
+
+      acknowledgeFakturPajakField: (invoiceId, fieldName) =>
+        set((s) => {
+          const existing = s.fakturPajakAcknowledgements[invoiceId] ?? []
+          if (existing.includes(fieldName)) return s
+          return {
+            fakturPajakAcknowledgements: {
+              ...s.fakturPajakAcknowledgements,
+              [invoiceId]: [...existing, fieldName],
+            },
+          }
+        }),
+
       reset: () => set({ ...initialState }),
     }),
     {
@@ -227,6 +256,8 @@ export function useHydratedInvoiceProcessingStore<T>(
       setInboxVendorIds: () => undefined,
       setInboxSort: () => undefined,
       clearInboxAdvancedFilters: () => undefined,
+      editFakturPajakField: () => undefined,
+      acknowledgeFakturPajakField: () => undefined,
       reset: () => undefined,
     })
   }

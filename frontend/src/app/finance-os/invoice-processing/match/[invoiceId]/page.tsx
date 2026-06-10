@@ -22,6 +22,7 @@ import {
 } from "@phosphor-icons/react"
 
 import { DuplicateFindingCard } from "@/components/neoflo-os/invoice-processing/duplicate-finding-card"
+import { FakturPajakCard } from "@/components/neoflo-os/invoice-processing/faktur-pajak-card"
 import { GLProposalCard } from "@/components/neoflo-os/invoice-processing/gl-proposal-card"
 import { InvoiceNumberLink } from "@/components/neoflo-os/invoice-processing/invoice-number-link"
 import { MatchPuzzle3Way } from "@/components/neoflo-os/invoice-processing/match-puzzle-3way"
@@ -145,9 +146,10 @@ export default function InvoiceProcessingMatchDetailPage() {
 
   const mode = invoice.matchMode
 
-  // Action button row visibility — only Mode A (3way/2way) has the action set
-  // wired in this bundle. Mode B/D placeholders ship with no actions yet.
+  // Action button row visibility — Mode A (3way/2way) wired here; Mode B/D delegate
+  // to their own cards. Faktur Pajak (Mode FP) handles its own actions internally.
   const isModeA = mode === "3way" || mode === "2way"
+  const isModeFP = mode === "faktur-pajak"
 
   return (
     <div className="flex-1 overflow-auto px-8 py-6">
@@ -260,6 +262,10 @@ export default function InvoiceProcessingMatchDetailPage() {
 
         {mode === "tax" ? <TaxCodingCard invoice={invoice} /> : null}
 
+        {isModeFP && invoice.fakturPajak ? (
+          <FakturPajakCard invoice={invoice} />
+        ) : null}
+
         {mode === "exception" && invoice.exception ? (
           <Card className="bg-card flex flex-col gap-3 p-6">
             <div className="flex items-center gap-2">
@@ -282,8 +288,8 @@ export default function InvoiceProcessingMatchDetailPage() {
           </Card>
         ) : null}
 
-        {/* ── Action button row (Mode A only) ───────────────────── */}
-        {isModeA && !isApproved && !confirmation ? (
+        {/* ── Action button row (Mode A only — FP card owns its own) ── */}
+        {isModeA && !isModeFP && !isApproved && !confirmation ? (
           <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
             <Button
               variant="outline"

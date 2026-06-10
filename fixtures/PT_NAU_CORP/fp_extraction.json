@@ -1,0 +1,94 @@
+[
+  {
+    "invoice_schema": {
+      "metadata": [
+        {
+          "row_id": "61eatuw2",
+          "field": "fp_number",
+          "value": "04002500024370305",
+          "is_required": false
+        },
+        {
+          "row_id": "irkcyra1",
+          "field": "vendor_name",
+          "value": "NAU CORP INDONESIA",
+          "is_required": false
+        },
+        {
+          "row_id": "5ldw2syk",
+          "field": "customer_name",
+          "value": "FASHION ESERVICES INDONESIA",
+          "is_required": false
+        },
+        {
+          "row_id": "xis21klv",
+          "field": "taxable_amount",
+          "value": "8341667.00",
+          "is_required": false
+        },
+        {
+          "row_id": "t0pdhbca",
+          "field": "vat_amount",
+          "value": "1001000.00",
+          "is_required": false
+        }
+      ],
+      "line_items": []
+    },
+    "bbox_schema": {
+      "metadata": [
+        {
+          "row_id": "61eatuw2",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "fp_number",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "irkcyra1",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "vendor_name",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "5ldw2syk",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "customer_name",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "xis21klv",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "taxable_amount",
+          "value_confidence": 1
+        },
+        {
+          "row_id": "t0pdhbca",
+          "bbox_left": 0,
+          "bbox_top": 0,
+          "bbox_width": 0,
+          "bbox_height": 0,
+          "page": 1,
+          "field": "vat_amount",
+          "value_confidence": 1
+        }
+      ],
+      "line_items": []
+    }
+  }
+]

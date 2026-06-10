@@ -1,0 +1,190 @@
+[
+  {
+    "fields": [
+      {
+        "field_name": "vendor_name",
+        "display_name": "Vendor Legal Entity",
+        "type": "string",
+        "required": true,
+        "match_status": "match",
+        "values": {
+          "invoice": [
+            {
+              "document_id": "NCI/2025/02/001",
+              "value": "PT Nau Corp Indonesia"
+            }
+          ],
+          "po": [
+            {
+              "document_id": "PO-00067",
+              "value": "PT Nau Corp Indonesia"
+            }
+          ]
+        },
+        "is_acknowledged": false,
+        "acknowledged_by": null,
+        "acknowledged_at": null
+      },
+      {
+        "field_name": "vendor_vat_id",
+        "display_name": "Vendor VAT ID",
+        "type": "string",
+        "required": false,
+        "match_status": "match",
+        "values": {
+          "invoice": [
+            {
+              "document_id": "NCI/2025/02/001",
+              "value": "22ABCDE1234F1Z9"
+            }
+          ],
+          "po": [
+            {
+              "document_id": "PO-00067",
+              "value": "22ABCDE1234F1Z9"
+            }
+          ]
+        },
+        "is_acknowledged": false,
+        "acknowledged_by": null,
+        "acknowledged_at": null
+      },
+      {
+        "field_name": "vendor_address",
+        "display_name": "Vendor Address",
+        "type": "string",
+        "required": false,
+        "match_status": "match",
+        "values": {
+          "invoice": [
+            {
+              "document_id": "NCI/2025/02/001",
+              "value": "Ruko Cluster Nirwana Taman Harapan Baru Blok W1 No. 2, Pejuang, Medan Satria, Bekasi, Jawa Barat"
+            }
+          ],
+          "po": [
+            {
+              "document_id": "PO-00067",
+              "value": "Ruko Cluster Nirwana Taman Harapan\nBaru Blok W1 No. 2, Pejuang, Medan, Satria, Bekasi, Jawa Barat, Indonesia"
+            }
+          ]
+        },
+        "is_acknowledged": false,
+        "acknowledged_by": null,
+        "acknowledged_at": null
+      },
+      {
+        "field_name": "vendor_bank_name",
+        "display_name": "Vendor Bank Name",
+        "type": "string",
+        "required": false,
+        "match_status": "mismatch",
+        "values": {
+          "invoice": [
+            {
+              "document_id": "NCI/2025/02/001",
+              "value": "BCA IDR"
+            }
+          ],
+          "po": [
+            {
+              "document_id": "PO-00067",
+              "value": null
+            }
+          ]
+        },
+        "is_acknowledged": false,
+        "acknowledged_by": null,
+        "acknowledged_at": null
+      },
+      {
+        "field_name": "vendor_bank_account_number",
+        "display_name": "Vendor Bank Account Number",
+        "type": "string",
+        "required": false,
+        "match_status": "mismatch",
+        "values": {
+          "invoice": [
+            {
+              "document_id": "NCI/2025/02/001",
+              "value": "519-5053356"
+            }
+          ],
+          "po": [
+            {
+              "document_id": "PO-00067",
+              "value": null
+            }
+          ]
+        },
+        "is_acknowledged": false,
+        "acknowledged_by": null,
+        "acknowledged_at": null
+      },
+      {
+        "field_name": "vendor_bank_account_name",
+        "display_name": "Vendor Bank Account Name",
+        "type": "string",
+        "required": false,
+        "match_status": "mismatch",
+        "values": {
+          "invoice": [
+            {
+              "document_id": "NCI/2025/02/001",
+              "value": "PT Nau Corp Indonesia"
+            }
+          ],
+          "po": [
+            {
+              "document_id": "PO-00067",
+              "value": null
+            }
+          ]
+        },
+        "is_acknowledged": false,
+        "acknowledged_by": null,
+        "acknowledged_at": null
+      },
+      {
+        "field_name": "vendor_bank_swift",
+        "display_name": "Vendor Bank SWIFT",
+        "type": "string",
+        "required": false,
+        "match_status": "mismatch",
+        "values": {
+          "invoice": [
+            {
+              "document_id": "NCI/2025/02/001",
+              "value": ""
+            }
+          ],
+          "po": [
+            {
+              "document_id": "PO-00067",
+              "value": null
+            }
+          ]
+        },
+        "is_acknowledged": false,
+        "acknowledged_by": null,
+        "acknowledged_at": null
+      }
+    ],
+    "summary": {
+      "total_fields": 7,
+      "matched": 3,
+      "mismatched": 4,
+      "missing_required": 0,
+      "missing": 0,
+      "match_percentage": 42.86,
+      "document_types": [
+        "invoice",
+        "po"
+      ],
+      "validation_result": "fail"
+    },
+    "required_missing_fields": [],
+    "error_message": null,
+    "error_code": null
+  }
+]

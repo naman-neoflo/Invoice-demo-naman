@@ -12,7 +12,7 @@ export type Vendor = {
   domain: string                 // for email matching
   primaryContactName: string
   primaryContactEmail: string
-  jurisdiction: "US" | "SG" | "GB" | "EU" | "AU" | "OTHER"
+  jurisdiction: "US" | "SG" | "GB" | "EU" | "AU" | "ID" | "OTHER"
   taxRegistration?: {
     type: "GST" | "VAT" | "SALES_TAX_NEXUS"
     id: string                   // e.g., GST reg number "202012345W"
@@ -120,7 +120,7 @@ export type Invoice = {
   invoiceNumber: string          // human-readable, e.g., "INV-998123-B"
   vendorId: VendorId
   amount: number                 // grand total in invoice currency
-  currency: "USD" | "SGD" | "GBP" | "EUR" | "AUD"
+  currency: "USD" | "SGD" | "GBP" | "EUR" | "AUD" | "IDR"
   channel: InvoiceChannel
   receivedAt: string             // ISO timestamp
   issuedAt: string               // ISO date (vendor's invoice date)
@@ -154,7 +154,9 @@ export type Invoice = {
     draftedEmail?: { to: string; cc?: string; subject: string; body: string }
   }
   // Determines which match-detail render mode is used
-  matchMode: "3way" | "2way" | "duplicate" | "tax" | "exception"
+  matchMode: "3way" | "2way" | "duplicate" | "tax" | "exception" | "faktur-pajak"
+  // Indonesia-specific: Faktur Pajak comparison data (only present when currency is IDR)
+  fakturPajak?: FakturPajakData
   assignedTo?: PersonaId
 }
 
@@ -224,6 +226,21 @@ export type TaxProposal = {
     label: string                // e.g., "Vendor is GST-registered"
     passed: boolean
   }[]
+}
+
+export type FakturPajakField = {
+  field_name: string           // e.g. "vendor_name"
+  display_name: string         // e.g. "Vendor Name"
+  fp_value: string | null      // extracted from FP document
+  invoice_value: string | null // from invoice metadata
+  match_status: "match" | "mismatch" | null
+  required: boolean
+}
+
+export type FakturPajakData = {
+  fp_number: string            // e.g. "010.000-26.00123456"
+  fp_date?: string             // ISO date on the FP
+  fields: FakturPajakField[]   // vendor_name, customer_name, taxable_amount, vat_amount
 }
 
 export type EarlyPayDiscount = {

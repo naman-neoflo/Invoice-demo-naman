@@ -103,7 +103,11 @@ class FixtureLoader:
             for attr, filename in STAGE_FILES.items():
                 fpath = entry / filename
                 if fpath.exists():
-                    setattr(bundle, attr, _load_json(fpath))
+                    data = _load_json(fpath)
+                    # n8n wraps some fixtures in a single-element list — unwrap
+                    if attr == "extraction" and isinstance(data, list):
+                        data = data[0] if data else {}
+                    setattr(bundle, attr, data)
 
             # Load optional PO and GRN sidecar files
             for f in sorted(entry.iterdir()):

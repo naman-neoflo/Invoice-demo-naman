@@ -1,0 +1,45 @@
+{
+  "bill_header": {
+    "vendor_id": "vendor-pt-nau-corp-001",
+    "vendor_name": "PT Nau Corp Indonesia",
+    "bill_number": "BILL-MQ8J3XDK-8A30",
+    "bill_date": "2026-06-08",
+    "due_date": "2026-08-08",
+    "reference": "PO-00067",
+    "currency": "IDR",
+    "subtotal": 9100000,
+    "tax_amount": 1001000,
+    "total": 10101000,
+    "wht": null,
+    "net_amount_after_wht": 10101000,
+    "required_vat_code": "IB"
+  },
+  "line_items": [
+    {
+      "id": "bl_1",
+      "invoice_line_id": "qwz8m0oc",
+      "description": "White Plastic Sack Uk. 120x150",
+      "account_code": "5010",
+      "account_name": "Cost of Goods",
+      "quantity": 1000,
+      "unit_price": 7000,
+      "tax_type": "PPN 11%",
+      "vat_tax_code": "IB",
+      "wht_tax_code": null,
+      "total": 7000000
+    },
+    {
+      "id": "bl_2",
+      "invoice_line_id": "65f1gwos",
+      "description": "Tape Cloth Yellow",
+      "account_code": "5010",
+      "account_name": "Cost of Goods",
+      "quantity": 300,
+      "unit_price": 7000,
+      "tax_type": "PPN 11%",
+      "vat_tax_code": "IB",
+      "wht_tax_code": null,
+      "total": 2100000
+    }
+  ]
+}

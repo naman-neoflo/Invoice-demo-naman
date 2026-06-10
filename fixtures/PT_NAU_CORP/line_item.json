@@ -1,0 +1,81 @@
+{
+  "matching_method": "ai",
+  "match_type": "3-way",
+  "base_document": "invoice",
+  "summary": {
+    "total_items": 2,
+    "perfect_matches": 2,
+    "probable_matches": 0,
+    "no_matches": 0
+  },
+  "results": [
+    {
+      "id": 1,
+      "invoice_line_id": "qwz8m0oc",
+      "match_status": "perfect",
+      "result_data": {
+        "matched_row_ids": [
+          1
+        ],
+        "po": [
+          "HPX6O"
+        ],
+        "grn": [
+          "XMK8E"
+        ],
+        "confidence": 1
+      },
+      "matching_method": "ai",
+      "matched_by": "ai",
+      "reasoning": "Searched for item code '01.705' and product description 'White Plastic Sack Uk. 120x150' in merged table. Found 1 candidate row where po_quantity (1000) >= invoice_quantity (1000) AND grn_quantity (1000) >= invoice_quantity (1000). Called evaluate_match tool which deterministically evaluated the candidate. Tool returned perfect match with row ID [1] as both PO and GRN totals match the invoice line_total (7,000,000) with 0% difference, quantity constraint satisfied (1000 = 1000), and 0% diff is well within the ±1.0% threshold.",
+      "created_at": "2026-06-10T20:34:48"
+    },
+    {
+      "id": 2,
+      "invoice_line_id": "65f1gwos",
+      "match_status": "perfect",
+      "result_data": {
+        "matched_row_ids": [
+          2
+        ],
+        "po": [
+          "V905L"
+        ],
+        "grn": [
+          "Z6G5U"
+        ],
+        "confidence": 1
+      },
+      "matching_method": "ai",
+      "matched_by": "ai",
+      "reasoning": "Searched for item code '01.704' and product description 'Tape Cloth Yellow' in merged table. Found 1 candidate row where po_quantity (300) >= invoice_quantity (300) AND grn_quantity (300) >= invoice_quantity (300). Called evaluate_match tool which deterministically evaluated the candidate. Tool returned perfect match with row ID [2] as both PO and GRN totals match the invoice line_total (2,100,000) with 0% difference, quantity constraint satisfied (300 = 300), and 0% diff is well within the ±1.0% threshold.",
+      "created_at": "2026-06-10T20:35:05"
+    }
+  ],
+  "ai_metadata": {
+    "total_cost_usd": 0.1089,
+    "total_time_ms": 37072,
+    "wall_clock_time_ms": 40479,
+    "items_processed": 2,
+    "avg_cost_per_item_usd": 0.0544,
+    "avg_time_per_item_ms": 18536,
+    "compaction": {
+      "count": 0,
+      "total_cost_usd": 0,
+      "total_time_ms": 0,
+      "avg_cost_per_compaction_usd": 0,
+      "avg_time_per_compaction_ms": 0
+    },
+    "processing_only": {
+      "cost_usd": 0.1089,
+      "time_ms": 37072
+    }
+  },
+  "system_metadata": null,
+  "compaction_mode": "batch",
+  "batch_size": 10,
+  "po_numbers": [
+    "PO-00067"
+  ],
+  "error": null
+}

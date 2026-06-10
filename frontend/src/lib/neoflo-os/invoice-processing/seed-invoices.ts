@@ -1700,7 +1700,102 @@ const FILLER: Invoice[] = [
 ]
 
 // ════════════════════════════════════════════════════════════════════
-// Final array — 51 invoices total
+// Indonesia Faktur Pajak hero (IDR, needs-review)
+// ════════════════════════════════════════════════════════════════════
+
+const INDONESIA_HERO: Invoice[] = [
+  {
+    id: "inv-pt-nau-corp-001",
+    invoiceNumber: "NCI/2025/02/001",
+    vendorId: "vendor-pt-nau-corp-001",
+    amount: 10_101_000,
+    currency: "IDR",
+    channel: "email",
+    receivedAt: "2026-06-08T09:00:00Z",
+    issuedAt: "2026-06-08",
+    dueAt: "2026-08-08",
+    termsLabel: "Net-60",
+    status: "needs-review",
+    ocrConfidence: 0.97,
+    matchMode: "faktur-pajak",
+    lines: [
+      {
+        lineNumber: 1,
+        description: "White Plastic Sack Uk. 120x150",
+        quantity: 1000,
+        unitPrice: 7_000,
+        unitOfMeasure: "pcs",
+        lineTotal: 7_000_000,
+      },
+      {
+        lineNumber: 2,
+        description: "Tape Cloth Yellow",
+        quantity: 300,
+        unitPrice: 7_000,
+        unitOfMeasure: "pcs",
+        lineTotal: 2_100_000,
+      },
+    ],
+    taxLine: {
+      type: "VAT",
+      rate: 0.11,
+      base: 9_100_000,
+      amount: 1_001_000,
+      jurisdiction: "Indonesia",
+    },
+    glProposal: {
+      account: "5010",
+      accountLabel: "Cost of Goods",
+      costCenter: "PROD-ID",
+      entity: "Neoflo Tech PTE LTD",
+      confidence: 0.91,
+      reasoning:
+        "PT Nau Corp Indonesia supplies packaging materials (PO-00067). GL coding to Cost of Goods — PROD-ID consistent with prior orders.",
+      sources: ["PO-00067", "vendor history (4 invoices)", "GL chart"],
+    },
+    fakturPajak: {
+      fp_number: "04002500024370305",
+      fp_date: "2026-06-08",
+      fields: [
+        {
+          field_name: "vendor_name",
+          display_name: "Vendor Name",
+          fp_value: "NAU CORP INDONESIA",
+          invoice_value: "PT Nau Corp Indonesia",
+          match_status: "mismatch",
+          required: true,
+        },
+        {
+          field_name: "customer_name",
+          display_name: "Customer Name",
+          fp_value: "FASHION ESERVICES INDONESIA",
+          invoice_value: "Neoflo Tech PTE LTD",
+          match_status: "mismatch",
+          required: true,
+        },
+        {
+          field_name: "taxable_amount",
+          display_name: "Taxable Amount (DPP)",
+          fp_value: "8,341,667",
+          invoice_value: "9,100,000",
+          match_status: "mismatch",
+          required: true,
+        },
+        {
+          field_name: "vat_amount",
+          display_name: "VAT Amount (PPN 11%)",
+          fp_value: "1,001,000",
+          invoice_value: "1,001,000",
+          match_status: "match",
+          required: true,
+        },
+      ],
+    },
+  },
+]
+
+// ════════════════════════════════════════════════════════════════════
+// Final array — 52 invoices total
 // ════════════════════════════════════════════════════════════════════
 
 export const SEED_INVOICES: Invoice[] = [
@@ -1709,6 +1804,7 @@ export const SEED_INVOICES: Invoice[] = [
   ...AUTO_POSTED_TODAY,
   ...HISTORICAL_POSTED,
   ...FILLER,
+  ...INDONESIA_HERO,
 ]
 
 const INVOICE_INDEX: Map<InvoiceId, Invoice> = new Map(
