@@ -327,9 +327,9 @@ async def _post_bill_live(
 
         subtotal_sum = sum(float(li.get("unit_price", 0)) * float(li.get("quantity", 1)) for li in line_items)
 
-        # Build line items using original pre-VAT prices (no scaling).
-        # For foreign bills, VAT and WHT are appended as explicit line items so the
-        # Zoho bill shows the full breakdown: pre-VAT amount → VAT → WHT → Balance Due.
+        # All bills use explicit VAT and WHT line items for a consistent breakdown:
+        #   pre-VAT amount → VAT/GST → Less WHT → Balance Due
+        # We do NOT apply tax_id on individual line items (would double-count with the VAT line).
         zoho_line_items = []
         for item in line_items:
             account_id = _resolve_account_id(item, by_code, by_name) or default_account_id
@@ -341,15 +341,11 @@ async def _post_bill_live(
             }
             if account_id:
                 li["account_id"] = account_id
-            tax_id = item.get("tax_id") or default_tax_id
-            if tax_id:
-                li["tax_id"] = tax_id
-            elif default_exemption_id:
+            if default_exemption_id:
                 li["tax_exemption_id"] = default_exemption_id
             zoho_line_items.append(li)
 
-        # For foreign bills: append VAT and WHT as explicit line items to show the full breakdown.
-        if is_foreign and tax_amount > 0:
+        if tax_amount > 0:
             vat_li: dict = {
                 "description": "VAT/GST",
                 "rate": round(tax_amount, 2),
@@ -361,7 +357,7 @@ async def _post_bill_live(
             if default_exemption_id:
                 vat_li["tax_exemption_id"] = default_exemption_id
             zoho_line_items.append(vat_li)
-            logger.info("[zoho_bill] added VAT line item: %.2f", tax_amount)
+            logger.info("[zoho_bill] added VAT/GST line item: %.2f", tax_amount)
 
         if wht_amount > 0:
             wht_rate_pct = round(wht_amount / subtotal_sum * 100, 0) if subtotal_sum > 0 else 0

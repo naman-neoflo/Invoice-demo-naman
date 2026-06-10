@@ -212,6 +212,16 @@ _VAT_CODE_TO_PCT: dict[str, str] = {
     "E0": "0%",
 }
 
+# VAT code → full label (mirrors the frontend dropdown).
+_VAT_CODE_LABELS: dict[str, str] = {
+    "IO": "IO: INPUT-PURCHASES FROM NON-GST REGISTERED SUPPLIER",
+    "IB": "IB: INPUT-BUSINESS PURCHASES",
+    "IE": "IE: INPUT-EXEMPT PURCHASES",
+    "VS": "VS: VAT STANDARD 12%",
+    "VZ": "VZ: VAT ZERO-RATED 0%",
+    "E0": "E0: EXPORT 0%",
+}
+
 # WHT code → display percentage (mirrors _WHT_RATE_TO_CODE entries).
 _WHT_CODE_TO_PCT: dict[str, str] = {
     "00": "0%",
@@ -357,7 +367,7 @@ def _build_simulate_document(run_id, header: dict, line_items: list[dict]):
             f"(difference {balance:,.2f} {currency})."
         )
 
-    # Per-invoice VAT code enforcement.
+    # VAT code enforcement — use fixture required_vat_code if set.
     required_vat_code = header.get("required_vat_code")
     if required_vat_code and status == "success":
         invalid_codes = [
@@ -367,15 +377,16 @@ def _build_simulate_document(run_id, header: dict, line_items: list[dict]):
         ]
         if invalid_codes:
             status = "error"
-            vat_label = f"{required_vat_code}: VAT STANDARD 12%" if required_vat_code == "VS" else required_vat_code
+            vat_label = _VAT_CODE_LABELS.get(required_vat_code, required_vat_code)
             message = (
                 f"Simulation failed — invalid VAT/GST Tax Code '{invalid_codes[0]}' on line item. "
                 f"This invoice requires '{vat_label}'."
             )
 
-    # Per-invoice WHT code enforcement.
-    required_wht_code = header.get("required_wht_code")
-    if required_wht_code and status == "success":
+    # WHT code enforcement — use fixture required_wht_code if set, otherwise
+    # infer from the effective WHT rate so enforcement is uniform across all invoices.
+    required_wht_code = header.get("required_wht_code") or _infer_wht_code(wht, subtotal)
+    if required_wht_code and wht > 0 and status == "success":
         invalid_wht = [
             it.get("wht_tax_code")
             for it in line_items
@@ -550,7 +561,7 @@ async def post_bill_to_erp(invoice_id: str, current_user: CurrentUser):
             if it.get("vat_tax_code") and it.get("vat_tax_code") != required_vat_code
         ]
         if invalid:
-            vat_label = f"{required_vat_code}: VAT STANDARD 12%" if required_vat_code == "VS" else required_vat_code
+            vat_label = _VAT_CODE_LABELS.get(required_vat_code, required_vat_code)
             raise HTTPException(
                 status_code=422,
                 detail=(
@@ -560,9 +571,11 @@ async def post_bill_to_erp(invoice_id: str, current_user: CurrentUser):
                 ),
             )
 
-    # Enforce required WHT code before posting.
-    required_wht_code = header.get("required_wht_code")
-    if required_wht_code:
+    # Enforce required WHT code before posting (infer from rate if not explicit in fixture).
+    subtotal_hdr = float(header.get("subtotal") or 0)
+    wht_hdr = float(header.get("wht") or 0)
+    required_wht_code = header.get("required_wht_code") or _infer_wht_code(wht_hdr, subtotal_hdr)
+    if required_wht_code and wht_hdr > 0:
         invalid_wht = [
             it.get("wht_tax_code")
             for it in line_items
