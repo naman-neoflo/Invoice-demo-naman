@@ -468,7 +468,7 @@ const settlement_GP_500K: SettlementPayoutDetail = {
 }
 
 const credit_GP_001: BankCreditRecordDetail = (() => {
-  const amount = 487350.00
+  const amount = 485125.00 // Matches PSP net exactly → L1 matched
   const settlements = [settlement_GP_500K]
   const { l1Status, l1Variance, pspNetAmount, pspFileReceived } = calculateL1Status(amount, settlements)
   const { l2Status, l2ExceptionCount, l2ExceptionTypes } = calculateL2Status(settlements, l1Status)
@@ -531,7 +531,7 @@ const settlement_GP_520K: SettlementPayoutDetail = {
 }
 
 const credit_GP_002: BankCreditRecordDetail = (() => {
-  const amount = 506844.00
+  const amount = 504530.00 // Matches PSP net exactly → L1 matched
   const settlements = [settlement_GP_520K]
   const { l1Status, l1Variance, pspNetAmount, pspFileReceived } = calculateL1Status(amount, settlements)
   const { l2Status, l2ExceptionCount, l2ExceptionTypes } = calculateL2Status(settlements, l1Status)
@@ -651,7 +651,7 @@ const settlement_GP_510K: SettlementPayoutDetail = {
 }
 
 const credit_GP_004: BankCreditRecordDetail = (() => {
-  const amount = 497109.00
+  const amount = 494827.50 // Matches PSP net exactly → L1 matched
   const settlements = [settlement_GP_510K]
   const { l1Status, l1Variance, pspNetAmount, pspFileReceived } = calculateL1Status(amount, settlements)
   const { l2Status, l2ExceptionCount, l2ExceptionTypes } = calculateL2Status(settlements, l1Status)
@@ -821,7 +821,7 @@ const settlement_GP_EVE: SettlementPayoutDetail = {
 
 // GP_BATCH: Multi-settlement batch (AM + PM + EVE) - fully reconciled
 const credit_GP_BATCH: BankCreditRecordDetail = (() => {
-  const amount = 571921.87
+  const amount = 570021.87 // Matches sum of AM+PM+EVE PSP nets → L1 matched
   const settlements = [settlement_GP_AM, settlement_GP_PM, settlement_GP_EVE]
   const { l1Status, l1Variance, pspNetAmount, pspFileReceived } = calculateL1Status(amount, settlements)
   const { l2Status, l2ExceptionCount, l2ExceptionTypes } = calculateL2Status(settlements, l1Status)
@@ -927,7 +927,7 @@ const settlement_STR_380K: SettlementPayoutDetail = {
 }
 
 const credit_STR_001: BankCreditRecordDetail = (() => {
-  const amount = 365786.00
+  const amount = 366308.60 // Matches PSP net exactly → L1 matched
   const settlements = [settlement_STR_380K]
   const { l1Status, l1Variance, pspNetAmount, pspFileReceived } = calculateL1Status(amount, settlements)
   const { l2Status, l2ExceptionCount, l2ExceptionTypes } = calculateL2Status(settlements, l1Status)
@@ -991,7 +991,7 @@ const settlement_STR_FINAL: SettlementPayoutDetail = {
 
 // STR_002: L1 matched (zero variance), but has L2 exceptions (amount mismatch at order level)
 const credit_STR_002: BankCreditRecordDetail = (() => {
-  const amount = 384214.00
+  const amount = 384623.03 // Matches PSP net exactly → L1 matched
   const settlements = [settlement_STR_FINAL]
   // L1 is matched: Bank Credit = PSP Net (zero variance)
   const l1Status: L1Status = 'l1_matched'

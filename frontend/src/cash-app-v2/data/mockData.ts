@@ -191,7 +191,7 @@ export const mockDashboardKPIs: DashboardKPIs = {
   feeRecoveredMTD: 182000,
   feeRecoveryTarget: 312000,
   pendingJEs: 23,
-  totalBankCreditSGD: 4250000,   // 4.25M SGD - Total bank credits received yesterday
+  totalBankCreditSGD: 4250931.63, // ~4.25M SGD - Total bank credits received yesterday (dynamically overridden by dashboard service)
   // Trend data (comparison to previous period)
   coveragePctTrend: 2.1,         // +2.1% improvement vs previous period
   touchlessRateTrend: 1.5,       // +1.5% improvement
@@ -345,13 +345,14 @@ export const mockExceptionSummary: ExceptionSummary[] = [
 /**
  * PSP Reconciliation Status (Yesterday's Data)
  *
- * CRITICAL: SGD PSP Credits MUST Sum to Total Bank Credit SGD
- * Total Bank Credit (Yesterday): SGD 4.25M (see totalBankCreditSGD in KPIs)
- * Split: GrabPay SGD 3.5M + Stripe SGD 0.75M = SGD 4.25M
+ * NOTE: This static data is NO LONGER used by the Dashboard.
+ * The Dashboard now dynamically computes PSP reconciliation status
+ * from yesterday's bank credits via settlementsService.getBankCredits().
+ * See: services/mock/dashboard.mock.ts → getPSPReconciliationStatus()
  *
- * IDR PSPs are separate currency and don't affect SGD totals.
+ * Kept for backward compatibility with tests that import it directly.
  *
- * For each PSP: matched + unmatched = todayCredits
+ * Split: GrabPay SGD 3.5M + Stripe SGD ~750K = SGD ~4.25M
  */
 export const mockPSPReconciliationStatus: PSPReconciliationStatus[] = [
   {
@@ -440,11 +441,18 @@ export const mockTransactionStatusDistribution: TransactionStatusDistribution = 
   pendingReview: 2,
 }
 
+/**
+ * NOTE: Exception aging data is now dynamically computed by the Dashboard service
+ * from actual open exceptions via exceptionsService.getExceptions({ status: 'open' }).
+ * See: services/mock/dashboard.mock.ts → getExceptionAgingData()
+ *
+ * This static data is kept for backward compatibility with tests that import it directly.
+ */
 export const mockExceptionAgingData: ExceptionAgingData[] = [
   {
     pspId: 'grabpay',
     pspName: 'GrabPay',
-    age0to7Days: 5,       // All 5 GrabPay exceptions are recent
+    age0to7Days: 9,       // 9 GrabPay exceptions (all 0-7 days)
     age8to30Days: 0,
     age1to3Months: 0,
     ageOver3Months: 0,
@@ -452,7 +460,7 @@ export const mockExceptionAgingData: ExceptionAgingData[] = [
   {
     pspId: 'stripe',
     pspName: 'Stripe',
-    age0to7Days: 6,       // 6 recent Stripe exceptions
+    age0to7Days: 8,       // 8 recent Stripe exceptions
     age8to30Days: 1,      // 1 older (UO-20260606-001 from May 29)
     age1to3Months: 0,
     ageOver3Months: 0,
@@ -460,15 +468,12 @@ export const mockExceptionAgingData: ExceptionAgingData[] = [
 ]
 
 /**
- * VALIDATION (Enhanced Exceptions with NBA - SGD Only):
- * Open Exceptions (All time): 13 exceptions with NBA defined
- * Chart breakdown:
- * - GrabPay: 5 (all 0-7 days)
- * - Stripe: 7 (6 in 0-7 days + 1 in 8-30 days)
- * - Unknown: 1 (BC-SGD-20260603-UNMATCHED, not shown in chart)
- * TOTAL: 5 + 7 + 1 = 13 ✓
+ * NOTE: Unsettled aging buckets are now dynamically computed by the Dashboard service
+ * from ALL non-reconciled bank credits via settlementsService.getBankCredits().
+ * See: services/mock/dashboard.mock.ts → getUnsettledAgingBuckets()
+ *
+ * This static data is kept for backward compatibility with tests that import it directly.
  */
-
 export const mockUnsettledAgingBuckets: UnsettledAgingBucket[] = [
   {
     pspId: 'grabpay',
@@ -1388,10 +1393,9 @@ export const mockExceptions: Exception[] = [
 /**
  * Settlement Payouts - Yesterday's Data (2026-06-06)
  *
- * MATHEMATICAL VALIDATION:
- * GrabPay SGD settlements (yesterday): 284,000 + 1,420,000 + 890,000 + 906,000 = 3,500,000
- * Stripe SGD settlements (yesterday): 420,000 + 330,000 = 750,000
- * Total SGD: 3,500,000 + 750,000 = 4,250,000 ✓ Matches totalBankCreditSGD
+ * NOTE: These legacy settlement payouts are kept for backward compatibility.
+ * The primary settlement data source is now settlementsData.ts (getMockBankCredits).
+ * GrabPay SGD: ~3,500,000 | Stripe SGD: ~750,931.63 | Total: ~4,250,931.63
  *
  * Each settlement shows:
  * - bankCredit: Amount received in bank
