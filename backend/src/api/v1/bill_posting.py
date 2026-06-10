@@ -360,7 +360,7 @@ def _build_simulate_document(run_id, header: dict, line_items: list[dict]):
         (it.get("vat_tax_code") for it in line_items if it.get("vat_tax_code")),
         "VS",
     )
-    if tax_amount >= 0 and input_vat_code and input_vat_code != "VS":
+    if any(it.get("vat_tax_code") for it in line_items):
         # Show input tax row for all invoices with a VAT code (including 0% rate).
         vat_pct = _VAT_CODE_TO_PCT.get(input_vat_code, "")
         input_vat_desc = f"Input tax · {vat_pct}" if vat_pct else "Input tax"
