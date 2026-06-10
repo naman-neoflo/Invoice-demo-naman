@@ -26,6 +26,7 @@ STAGE_FILES = {
     "extraction": "extraction.json",
     "vendor_validation": "vendor_validation.json",
     "metadata_validation": "metadata_validation.json",
+    "fp_extraction": "fp_extraction.json",
     "line_item": "line_item.json",
     "bill_posting": "bill_posting.json",
     "erp_result": "erp_result.json",
@@ -40,6 +41,7 @@ class FixtureBundle:
     extraction: dict = field(default_factory=dict)
     vendor_validation: dict = field(default_factory=lambda: dict(_PLACEHOLDER_TEMPLATE))
     metadata_validation: dict = field(default_factory=lambda: dict(_PLACEHOLDER_TEMPLATE))
+    fp_extraction: dict = field(default_factory=dict)
     line_item: dict = field(default_factory=dict)
     bill_posting: dict = field(default_factory=dict)
     erp_result: dict = field(default_factory=dict)
@@ -52,6 +54,7 @@ class FixtureBundle:
             "extraction": self.extraction,
             "vendor_validation": self.vendor_validation,
             "metadata_validation": self.metadata_validation,
+            "fp_extraction": self.fp_extraction,
             "line_item_matching": self.line_item,
             "bill_posting": self.bill_posting,
             "erp_result": self.erp_result,
@@ -105,7 +108,7 @@ class FixtureLoader:
                 if fpath.exists():
                     data = _load_json(fpath)
                     # n8n wraps some fixtures in a single-element list — unwrap
-                    if attr == "extraction" and isinstance(data, list):
+                    if attr in ("extraction", "fp_extraction") and isinstance(data, list):
                         data = data[0] if data else {}
                     setattr(bundle, attr, data)
 

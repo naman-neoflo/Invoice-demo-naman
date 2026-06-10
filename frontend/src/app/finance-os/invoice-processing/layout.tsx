@@ -38,10 +38,13 @@ export default function WorkspaceInvoiceProcessingLayout({
   }, [])
 
   return (
-    <>
+    <div className="flex h-screen flex-col overflow-hidden">
       <WorkspaceHeader onOpenChat={() => setChatOpen(true)} />
       <InvoiceProcessingTabs />
-      {children}
+      {/* flex-1 min-h-0 so child pages can use h-full or flex-1 safely */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        {children}
+      </div>
       <ChatThread
         open={chatOpen}
         onClose={() => setChatOpen(false)}
@@ -49,6 +52,6 @@ export default function WorkspaceInvoiceProcessingLayout({
       />
       <InvoicePreviewMount />
       <POPreviewMount />
-    </>
+    </div>
   )
 }

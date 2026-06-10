@@ -20,6 +20,7 @@ from .api.v1 import ingestion as ingestion_router
 from .api.v1 import extraction as extraction_router
 from .api.v1 import vendor_validation as vendor_validation_router
 from .api.v1 import metadata_validation as metadata_validation_router
+from .api.v1 import fp_extraction as fp_extraction_router
 from .api.v1 import line_item_matching as line_item_matching_router
 from .api.v1 import bill_posting as bill_posting_router
 from .api.v1 import erp as erp_router
@@ -90,6 +91,7 @@ app.include_router(ingestion_router.router, prefix="/api/v1")
 app.include_router(extraction_router.router, prefix="/api/v1")
 app.include_router(vendor_validation_router.router, prefix="/api/v1")
 app.include_router(metadata_validation_router.router, prefix="/api/v1")
+app.include_router(fp_extraction_router.router, prefix="/api/v1")
 app.include_router(line_item_matching_router.router, prefix="/api/v1")
 app.include_router(bill_posting_router.router, prefix="/api/v1")
 app.include_router(erp_router.router, prefix="/api/v1")

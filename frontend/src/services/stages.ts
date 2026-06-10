@@ -81,7 +81,7 @@ export const stagesService = {
    * Approve a stage. `body` is passed through verbatim so callers that send
    * nothing keep sending nothing and callers that send `{}` keep sending `{}`.
    */
-  approve: <T = { redirect: string }>(
+  approve: <T = { redirect: string; next_stage?: string }>(
     invoiceId: string,
     slug: string,
     body?: unknown,
@@ -116,6 +116,20 @@ export const stagesService = {
   unacknowledgeFields: (invoiceId: string, fieldNames: string[]) =>
     api.post(
       `/api/v1/invoices/${invoiceId}/stages/metadata_validation/unacknowledge`,
+      { field_names: fieldNames },
+    ),
+
+  /** Persist FP extraction field acknowledgements (stored in invoices.fp_acknowledged_fields). */
+  acknowledgeFpFields: (invoiceId: string, fieldNames: string[]) =>
+    api.post(
+      `/api/v1/invoices/${invoiceId}/stages/fp_extraction/acknowledge`,
+      { field_names: fieldNames },
+    ),
+
+  /** Revert FP extraction field acknowledgements. */
+  unacknowledgeFpFields: (invoiceId: string, fieldNames: string[]) =>
+    api.post(
+      `/api/v1/invoices/${invoiceId}/stages/fp_extraction/unacknowledge`,
       { field_names: fieldNames },
     ),
 

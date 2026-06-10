@@ -17,7 +17,7 @@
         {
           "row_id": "5ldw2syk",
           "field": "customer_name",
-          "value": "FASHION ESERVICES INDONESIA",
+          "value": "Neoflo Tech PTE LTD",
           "is_required": false
         },
         {
@@ -39,53 +39,53 @@
       "metadata": [
         {
           "row_id": "61eatuw2",
-          "bbox_left": 0,
-          "bbox_top": 0,
-          "bbox_width": 0,
-          "bbox_height": 0,
-          "page": 1,
+          "bbox_left": 0.0729,
+          "bbox_top": 0.1853,
+          "bbox_width": 0.4284,
+          "bbox_height": 0.0160,
+          "page": 2,
           "field": "fp_number",
-          "value_confidence": 1
+          "value_confidence": 0.98787
         },
         {
           "row_id": "irkcyra1",
-          "bbox_left": 0,
-          "bbox_top": 0,
-          "bbox_width": 0,
-          "bbox_height": 0,
-          "page": 1,
+          "bbox_left": 0.550,
+          "bbox_top": 0.083,
+          "bbox_width": 0.205,
+          "bbox_height": 0.022,
+          "page": 2,
           "field": "vendor_name",
-          "value_confidence": 1
+          "value_confidence": 0.94
         },
         {
           "row_id": "5ldw2syk",
-          "bbox_left": 0,
-          "bbox_top": 0,
-          "bbox_width": 0,
-          "bbox_height": 0,
-          "page": 1,
+          "bbox_left": 0.080,
+          "bbox_top": 0.369,
+          "bbox_width": 0.185,
+          "bbox_height": 0.018,
+          "page": 2,
           "field": "customer_name",
-          "value_confidence": 1
+          "value_confidence": 0.94
         },
         {
           "row_id": "xis21klv",
-          "bbox_left": 0,
-          "bbox_top": 0,
-          "bbox_width": 0,
-          "bbox_height": 0,
-          "page": 1,
+          "bbox_left": 0.864,
+          "bbox_top": 0.758,
+          "bbox_width": 0.102,
+          "bbox_height": 0.020,
+          "page": 2,
           "field": "taxable_amount",
-          "value_confidence": 1
+          "value_confidence": 0.93
         },
         {
           "row_id": "t0pdhbca",
-          "bbox_left": 0,
-          "bbox_top": 0,
-          "bbox_width": 0,
-          "bbox_height": 0,
-          "page": 1,
+          "bbox_left": 0.802,
+          "bbox_top": 0.736,
+          "bbox_width": 0.151,
+          "bbox_height": 0.032,
+          "page": 2,
           "field": "vat_amount",
-          "value_confidence": 1
+          "value_confidence": 0.94
         }
       ],
       "line_items": []

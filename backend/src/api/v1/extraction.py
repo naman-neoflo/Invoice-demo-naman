@@ -68,10 +68,13 @@ async def approve_extraction(invoice_id: str, current_user: CurrentUser):
     )
 
     next_stage = result["next_stage"]
-    # vendor_validation is skipped → next stage after extraction is
-    # metadata_validation, but on the FE it lives inside the unified
-    # /matching page (Metadata tab). Land the user there directly.
-    redirect = f"/invoice/{invoice_id}/matching?tab=metadata" if next_stage else f"/invoice/{invoice_id}"
+    if next_stage == "fp_extraction":
+        redirect = f"/invoice/{invoice_id}/fp-extraction"
+    elif next_stage:
+        # Non-IDR: fp_extraction skipped — land on the unified /matching page.
+        redirect = f"/invoice/{invoice_id}/matching?tab=metadata"
+    else:
+        redirect = f"/invoice/{invoice_id}"
     return _envelope(data={"next_stage": next_stage, "redirect": redirect})
 
 

@@ -22,6 +22,7 @@ from ._common import _envelope, _oid
 # vendor_validation is skipped in the forward flow).
 _VISIBLE_SLUGS = [
     "extraction",
+    "fp_extraction",
     "metadata_validation",
     "line_item_matching",
     "bill_posting",

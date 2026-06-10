@@ -28,7 +28,11 @@ _MANDATORY_CHECK_STAGES = {"extraction", "vendor_validation", "metadata_validati
 STAGE_SEQUENCE = [
     "ingestion",
     "extraction",
-    # vendor_validation is intentionally skipped — after extraction the pipeline
+    # fp_extraction is IDR-only — auto-skipped for non-IDR invoices in approve_stage.
+    # Sits between extraction and metadata_validation so the FP document is
+    # verified before the metadata comparison run.
+    "fp_extraction",
+    # vendor_validation is intentionally skipped — after fp_extraction the pipeline
     # transitions directly into metadata_validation. The vendor_validation
     # stage definition (display name, tasks, percent, fixture) is preserved
     # below so any pre-existing pipeline runs that still reference the slug
@@ -43,6 +47,7 @@ STAGE_DISPLAY = {
     "extraction": "Extraction",
     "vendor_validation": "Vendor Validation",
     "metadata_validation": "Metadata Validation",
+    "fp_extraction": "FP Extraction",
     "line_item_matching": "Line Item Matching",
     "bill_posting": "Bill Posting",
 }
@@ -53,6 +58,7 @@ STAGE_TASKS = {
     "extraction":           ["ocr", "field_extract", "confidence"],
     "vendor_validation":    ["master_lookup", "field_compare"],
     "metadata_validation":  ["po_lookup", "meta_compare"],
+    "fp_extraction":        ["fp_ocr", "fp_field_extract"],
     "line_item_matching":   ["ai_match", "match_review"],
     "bill_posting":         ["bill_prepare", "erp_post", "notify"],
 }
@@ -61,8 +67,9 @@ STAGE_PERCENT = {
     "ingestion":            5,
     "extraction":           20,
     "vendor_validation":    37,
-    "metadata_validation":  54,
-    "line_item_matching":   70,
+    "fp_extraction":        37,
+    "metadata_validation":  55,
+    "line_item_matching":   72,
     "bill_posting":         87,
 }
 
@@ -220,6 +227,12 @@ async def approve_stage(
     )
 
     next_slug = get_next_stage(slug)
+
+    # fp_extraction is IDR-only — skip it for invoices in any other currency.
+    if next_slug == "fp_extraction":
+        inv_doc = await invoices(db).find_one({"run_id": run_id}, {"currency": 1}) or {}
+        if (inv_doc.get("currency") or "").upper() != "IDR":
+            next_slug = get_next_stage("fp_extraction")  # metadata_validation
 
     if next_slug is None:
         # Last stage — auto-complete (system-validated, no second human click)

@@ -151,6 +151,50 @@ export default function InvoiceProcessingMatchDetailPage() {
   const isModeA = mode === "3way" || mode === "2way"
   const isModeFP = mode === "faktur-pajak"
 
+  // FP mode gets a full-height split-pane layout — no max-w-5xl container.
+  if (isModeFP && invoice.fakturPajak) {
+    return (
+      <div className="flex h-full flex-col overflow-hidden">
+        {/* Compact top bar — back link + invoice summary */}
+        <div className="border-border/60 bg-card shrink-0 border-b px-8 py-3">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-2">
+              <Link
+                href="/neoflo-workspace/invoice-processing/inbox"
+                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
+              >
+                <ArrowLeft size={14} weight="regular" />
+                <span>Back to Inbox</span>
+              </Link>
+            </div>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+              <h1 className="text-foreground inline-flex items-baseline gap-2 text-base font-semibold tracking-tight">
+                <span>Faktur Pajak</span>
+                <span className="text-muted-foreground font-normal">·</span>
+                <span className="text-muted-foreground font-normal">{vendorName}</span>
+                <span className="text-muted-foreground font-normal">·</span>
+                <InvoiceNumberLink
+                  invoiceId={invoice.id}
+                  label={invoice.invoiceNumber}
+                  className="text-muted-foreground hover:text-primary font-normal"
+                  mono={false}
+                />
+              </h1>
+              <span className="text-muted-foreground text-sm tabular-nums">
+                {fmtMoney(invoice.amount, invoice.currency)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Full-height FP screen */}
+        <div className="min-h-0 flex-1">
+          <FakturPajakCard invoice={invoice} />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex-1 overflow-auto px-8 py-6">
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -262,10 +306,6 @@ export default function InvoiceProcessingMatchDetailPage() {
 
         {mode === "tax" ? <TaxCodingCard invoice={invoice} /> : null}
 
-        {isModeFP && invoice.fakturPajak ? (
-          <FakturPajakCard invoice={invoice} />
-        ) : null}
-
         {mode === "exception" && invoice.exception ? (
           <Card className="bg-card flex flex-col gap-3 p-6">
             <div className="flex items-center gap-2">
@@ -289,7 +329,7 @@ export default function InvoiceProcessingMatchDetailPage() {
         ) : null}
 
         {/* ── Action button row (Mode A only — FP card owns its own) ── */}
-        {isModeA && !isModeFP && !isApproved && !confirmation ? (
+        {isModeA && !isApproved && !confirmation ? (
           <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
             <Button
               variant="outline"

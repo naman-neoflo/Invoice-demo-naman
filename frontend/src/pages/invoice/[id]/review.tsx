@@ -129,6 +129,7 @@ function ReviewPage() {
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [approving, setApproving] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [nextStage, setNextStage] = useState<string | null>(null);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"metadata" | "line_items">("metadata");
   const [activeKey, setActiveKey] = useState<string | null>(null);
@@ -268,9 +269,12 @@ function ReviewPage() {
   const handleApprove = async () => {
     if (!id) return;
     if (data?.status === "approved" || data?.status === "completed") {
-      // vendor_validation is skipped, metadata + line-items now live in a
-      // single tabbed page at /matching. Land on the Metadata tab.
-      router.push(`/invoice/${id}/matching?tab=metadata`);
+      // IDR invoices have an fp_extraction stage between extraction and matching.
+      const currency = (data.currency ?? "").toUpperCase();
+      const dest = currency === "IDR"
+        ? `/invoice/${id}/fp-extraction`
+        : `/invoice/${id}/matching?tab=metadata`;
+      router.push(dest);
       return;
     }
     setApproving(true);
@@ -292,6 +296,7 @@ function ReviewPage() {
         }
       }
       const res = await stagesService.approve(id, "extraction");
+      setNextStage(res.next_stage ?? null);
       setTransitioning(true);
       setTimeout(() => router.push(res.redirect), 2500);
     } catch (err) {
@@ -344,11 +349,15 @@ function ReviewPage() {
   }
 
   if (transitioning) {
+    const isFp = nextStage === "fp_extraction";
     return (
       <StageTransitionOverlay
-        title="We're matching the invoice metadata against the PO."
-        subtitle="This may take a few minutes. Please keep this page open."
-        steps={[
+        title={isFp ? "Verifying Faktur Pajak details." : "We're matching the invoice metadata against the PO."}
+        subtitle={isFp ? "Cross-checking FP fields against extracted invoice data." : "This may take a few minutes. Please keep this page open."}
+        steps={isFp ? [
+          { label: "Extracting data from document", status: "done" },
+          { label: "Faktur Pajak verification", status: "active" },
+        ] : [
           { label: "Extracting data from document", status: "done" },
           { label: "Matching metadata against PO", status: "active" },
         ]}
@@ -456,11 +465,15 @@ function ReviewPage() {
               </button>
             </>
           ) : !isActionable ? (
-            // Stage is approved or completed — Next always goes to Matching
-            // (the sequential next step after Extraction, regardless of whether
-            // matching/bill-posting stages are also already completed).
+            // Stage is approved — IDR goes to FP Extraction, others to Matching.
             <button
-              onClick={() => router.push(`/invoice/${id}/matching?tab=metadata`)}
+              onClick={() => {
+                const currency = (data?.currency ?? "").toUpperCase();
+                const dest = currency === "IDR"
+                  ? `/invoice/${id}/fp-extraction`
+                  : `/invoice/${id}/matching?tab=metadata`;
+                router.push(dest);
+              }}
               className="inline-flex items-center gap-1 disabled:opacity-50"
               style={{
                 height: 32, padding: "0 16px", fontSize: 14, fontWeight: 500,
