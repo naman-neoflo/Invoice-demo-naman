@@ -223,13 +223,13 @@
       },
       {
         "row_id": "2gcxy7uy",
-        "bbox_left": 0.5474894131881428,
-        "bbox_top": 0.4839675074818298,
-        "bbox_width": 0.008469449485783424,
-        "bbox_height": 0.008123129542539546,
+        "bbox_left": 0.242017,
+        "bbox_top": 0.069436,
+        "bbox_width": 0.217647,
+        "bbox_height": 0.049258,
         "page": 1,
         "field": "vendor_address",
-        "value_confidence": 0.027027027027026973
+        "value_confidence": 0.927027027027026973
       },
       {
         "row_id": "ltrtyaev",
