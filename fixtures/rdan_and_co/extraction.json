@@ -223,13 +223,13 @@
       },
       {
         "row_id": "8gg7ke0v",
-        "bbox_left": 0.14859926918392205,
-        "bbox_top": 0.2809810671256454,
-        "bbox_width": 0.037758830694275276,
-        "bbox_height": 0.009896729776247849,
+        "bbox_left": 0.242857,
+        "bbox_top": 0.046884,
+        "bbox_width": 0.514286,
+        "bbox_height": 0.020178,
         "page": 1,
         "field": "vendor_address",
-        "value_confidence": 0.07594936708860756
+        "value_confidence": 0.97594936708860756
       },
       {
         "row_id": "p29069jq",
