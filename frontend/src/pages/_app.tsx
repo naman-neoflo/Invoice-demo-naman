@@ -25,6 +25,11 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <style jsx global>{`
+        :root {
+          --sidebar-width: ${sidebarW}px;
+        }
+      `}</style>
       <NavSidebar collapsed={collapsed} onCollapse={setCollapsed} />
 
       {/* Preloaded Agentic Search iframe — always mounted, shown only on /agentic-search */}
